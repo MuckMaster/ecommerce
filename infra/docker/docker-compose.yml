@@ -1,0 +1,70 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ecommerce_bolsos_mysql
+    environment:
+      MYSQL_DATABASE: ecommerce_bolsos
+      MYSQL_USER: "1234"
+      MYSQL_PASSWORD: "1234"
+      MYSQL_ROOT_PASSWORD: "root"
+    ports:
+      - "3307:3306" # solo DEV. En prod quítalo.
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - ecommerce_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  laravel-consumer:
+    build:
+      context: ../../services/laravel-consumer
+      dockerfile: Dockerfile
+    container_name: ecommerce_bolsos_laravel_consumer
+    working_dir: /var/www
+    volumes:
+      - ../../services/laravel-consumer:/var/www
+    environment:
+      APP_ENV: local
+      DB_CONNECTION: mysql
+      DB_HOST: mysql         
+      DB_PORT: 3306
+      DB_DATABASE: ecommerce_bolsos
+      DB_USERNAME: "1234"
+      DB_PASSWORD: "1234"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - ecommerce_net
+    command: ["bash", "-lc", "php -v && composer -V && tail -f /dev/null"]
+
+  api:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile
+    container_name: ecommerce_bolsos_api
+    working_dir: /app
+    volumes:
+      - ../../apps/api:/app
+      - /app/node_modules
+    env_file:
+      - ../../apps/api/.env.docker
+    ports:
+      - "3000:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - ecommerce_net
+
+
+volumes:
+  mysql_data:
+
+networks:
+  ecommerce_net:
+    driver: bridge

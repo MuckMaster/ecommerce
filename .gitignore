@@ -1,0 +1,32 @@
+# Node
+node_modules
+dist
+.build
+.cache
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Docker
+docker-compose.override.yml
+
+# Prisma
+generated
+prisma/migrations/*/migration.sql
+
+# Logs
+logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+
+# Coverage
+coverage
