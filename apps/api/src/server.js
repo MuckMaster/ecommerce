@@ -1,27 +1,9 @@
-import express from "express";
-import cors from "cors";
-import { prisma } from "./lib/prisma.js";
+//server.js
 
-const app = express();
+import { app } from "./app.js";
 
-app.use(cors());
-app.use(express.json());
+const PORT = process.env.PORT || 3000;
 
-app.get("/health", async (req, res) => {
-
-    try {
-        await prisma.$queryRaw`SELECT 1`;
-        res.json({ ok: true, db: "connected"});
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ ok: false, error: "db_connection_failed" });
-    }
-
+app.listen(PORT, () => {
+    console.log(`API running on http://localhost:${PORT}`);
 });
-
-
-app.listen(3000, () => {
-
-    console.log("API running on http://localhost:3000");
-
-})
