@@ -48,7 +48,7 @@ const refresh = async (req, res) => {
         const { refreshToken } = req.body;
 
         const result = await authService.refresh(refreshToken);
-        res.json(reesult);
+        res.json(result);
     } catch (e) {
         if (e.code === "INVALID_REFRESH_TOKEN" || e.code === "NO_REFRESH_TOKEN") {
             return res.status(401).json({ error: "Invalid or expired refresh token" });
@@ -75,7 +75,7 @@ const logout = async (req, res) => {
 const me = async (req, res) => {
 
     try {
-        const user = await authService.getUserById(req.user.Id);
+        const user = await authService.getUserById(req.userId);
         if(!user) return res.status(404).json({ error: "User not found" });
         res.json(user);
     } catch (e) {
