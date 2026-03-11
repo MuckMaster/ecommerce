@@ -8,7 +8,7 @@ services:
       MYSQL_PASSWORD: "1234"
       MYSQL_ROOT_PASSWORD: "root"
     ports:
-      - "3307:3306" # solo DEV. En prod quítalo.
+      - "3307:3306" # Quitar en produccion
     volumes:
       - mysql_data:/var/lib/mysql
     networks:

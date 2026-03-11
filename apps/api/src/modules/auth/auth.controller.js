@@ -2,13 +2,13 @@ import * as authService from "./auth.service.js";
 
 const register = async (req, res) => {
 
-    try {
+    try{
         const { name, email, password } = req.body;
 
-        if (!name || !email || !password) {
+        if (!name || !email || !password){
             return res.status(400).json({ error: "Missing required fields" });
         }
-
+        
         const result = await authService.register({ name, email, password });
         res.status(201).json(result);
     } catch (e) {
@@ -23,33 +23,59 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
 
-    try{
+    try {
         const { email, password } = req.body;
 
         if(!email || !password) {
-            return res.status(400).json({ error: "Missing required fields"});
+            return res.status(400).json({ error: "Missing required fields" });
         }
 
         const result = await authService.login({ email, password });
         res.json(result);
     } catch (e) {
-        if (e.code === "INVALID CREDENTIALS") {
+        if (e.code === "INVALID_CREDENTIALS") {
             return res.status(401).json({ error: "Invalid credentials" });
         }
         console.error(e);
-        res.status(500).json({ error: "Internal server error"});
+        res.status(500).json({ error: "Internal server error" });
     }
 
 };
 
-const logout = (req, res) => {
-    res.json({ ok:true, message: "Logged out" });
+const refresh = async (req, res) => {
+
+    try{
+        const { refreshToken } = req.body;
+
+        const result = await authService.refresh(refreshToken);
+        res.json(reesult);
+    } catch (e) {
+        if (e.code === "INVALID_REFRESH_TOKEN" || e.code === "NO_REFRESH_TOKEN") {
+            return res.status(401).json({ error: "Invalid or expired refresh token" });
+        }
+        console.error(e);
+        res.status(500).json({ error: "Internal server error" });
+    }
+
+};
+
+const logout = async (req, res) => {
+
+    try {
+        const { refreshToken } = req.body;
+        await authService.logout(refreshToken);
+        res.json({ ok: true, message: "Logged out"});
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: "Internal service error"});
+    }
+
 };
 
 const me = async (req, res) => {
 
     try {
-        const user =await authService.getUserById(req.userId);
+        const user = await authService.getUserById(req.user.Id);
         if(!user) return res.status(404).json({ error: "User not found" });
         res.json(user);
     } catch (e) {
@@ -59,4 +85,4 @@ const me = async (req, res) => {
 
 };
 
-export { register, login, logout, me };
+export { register, login, refresh, logout, me };
