@@ -14,7 +14,7 @@ const formatProduct = (product) => ({
     ...product,
     id: String(product.id),
     price: centsToEuros(product.price_cents), //devuelve precio en euros
-    price_cents: undefined, //oculta centimos a cliente
+    price_cents: undefined, //oculta centimos
     product_variants: product.product_variants?.map((v) => ({
         ...v,
         id: String(v.id),

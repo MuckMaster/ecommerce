@@ -24,13 +24,26 @@ const getProductById = async (req, res) => {
 
 };
 
+const searchProducts = async (req, res) => {
+
+    try {
+        const { q } = req.query;
+        const products = await productsService.searchProducts(q);
+        res.json(products);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({  error: "Internal server error" });
+    }
+
+};
+
 const createProduct = async (req, res) => {
 
     try{
         const { name, slug, price } = req.body;
 
         if(!name || !slug || price === undefined) {
-            return res.status(400).json({ error: "Missing required fields: anme, slug, price" });
+            return res.status(400).json({ error: "Missing required fields: name, slug, price" });
         }
 
         const product = await productsService.createProduct(req.body);
