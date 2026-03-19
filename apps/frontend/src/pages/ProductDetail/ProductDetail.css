@@ -10,21 +10,20 @@
 .detail__gallery {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
     gap: 2px;
-    background: var(--sand);
+    align-content: start;
 }
 
 .detail__img-wrap {
-    aspect-ratio:  3 / 4;
+    aspect-ratio: 3/4;
     overflow: hidden;
 }
+
 
 .detail__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: opacity var(--transition);
 }
 
 .detail__img:hover {

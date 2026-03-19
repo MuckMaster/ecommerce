@@ -1,13 +1,29 @@
 import { useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import Accordion from '../../components/Accordion/Accordion'
 import './ProductDetail.css'
+import { products } from '../../data/products'
 
-function ProductDetail({ product, onNavigate }) {
+function ProductDetail() {
+    const { id } = useParams()
+    const navigate = useNavigate()
+
+
+    const product = products.find(p => p.id === parseInt(id))
+
+
+    if (!product) {
+        navigate('/catalogo')
+        return null
+    }
+
     const [selectedColor, setSelectedColor] = useState(product.swatches[0])
 
     return (
         <main className="detail">
+
             <div className="detail__wrap">
+
                 <div className="detail__gallery">
                     {product.images.map((src, i) => (
                         <div key={i} className="detail__img-wrap">
@@ -23,9 +39,9 @@ function ProductDetail({ product, onNavigate }) {
 
                 <div className="detail__info">
                     <nav className="detail__breadcrumb" aria-label="Ruta de navegación">
-                        <span onClick={() => onNavigate('home')}>Inicio</span>
+                        <span onClick={() => navigate('/')}>Inicio</span>
                         <span className="detail__breadcrumb-sep">›</span>
-                        <span onClick={() => onNavigate('catalogue')}>Colección</span>
+                        <span onClick={() => navigate('/catalogo')}>Colección</span>
                         <span className="detail__breadcrumb-sep">›</span>
                         <span>{product.name}</span>
                     </nav>
@@ -34,32 +50,41 @@ function ProductDetail({ product, onNavigate }) {
                     <div className="detail__categories">
                         <span>{product.category}</span>
                         <span className="detail__cat-sep">|</span>
-                        <span>Artesanal</span>
+                        <span>{product.subcategory}</span>
                     </div>
 
                     <div className="detail__price">{product.price}€</div>
 
-                    <p className="detail__color-label">
-                        Color: <span>{selectedColor.name}</span>
-                    </p>
+                    {/* Funcion de swatches de color */}
 
-                    <div className="detail__swatches">
-                        {product.swatches.map(swatch => (
-                            <button
-                                key={swatch.name}
-                                className={`detail__swatch ${selectedColor.name === swatch.name ? 'detail__swatch--active' : ''}`}
-                                style={{ background: swatch.css }}
-                                onClick={() => setSelectedColor(swatch)}
-                                aria-label={`Color ${swatch.name}`}
-                                aria-pressed={selectedColor.name === swatch.name}
-                            />
-                        ))}
-                    </div>
+                    {product.swatches.length > 0 && (
+                        <>
+                            <p className="detail__color-label">
+                            Color: <span>{selectedColor.name}</span>
+                            </p>
+
+                            <div className="detail__swatches">
+                                {product.swatches.map(swatch => (
+                                    <button
+                                        key={swatch.name}
+                                        className={`detail__swatch ${selectedColor.name === swatch.name ? 'detail__swatch--active' : ''}`}
+                                        style={{ background: swatch.css }}
+                                        onClick={() => setSelectedColor(swatch)}
+                                        aria-label={`Color ${swatch.name}`}
+                                        aria-pressed={selectedColor.name === swatch.name}
+                                    />
+                                ))}
+                            </div>
+                        </>
+                    )}
 
                     <p className="detail__desc">{product.description}</p>
+
+                    {/* Botón desactivado temporalmente - funcionalidad de carrito pendiente
                     <button className="detail__btn-cart">
                         Añadir al carrito
                     </button>
+                    */}
 
                     <div className="detail__accordions">
                         <Accordion title="Envios">

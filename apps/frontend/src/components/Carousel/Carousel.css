@@ -18,8 +18,8 @@
 
 .carousel__slide {
     flex-shrink: 0;
-    height: 420px;
-    width: calc(420px * 3 / 4);
+    height: 700px;
+    width: calc(700px * 3 / 4);
     overflow: hidden;
     position: relative;
 }

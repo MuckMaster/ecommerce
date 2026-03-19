@@ -48,6 +48,13 @@
     border-color: var(--dark);
 }
 
+/* Parametros del logo cuando se ponga este
+.navbar__logo-img {
+  height: 40px; 
+  width: auto;
+}
+*/
+
 @media (max-width: 640px) {
     .navbar {
         padding: 12px 16px;

@@ -1,20 +1,23 @@
+import { useNavigate } from 'react-router-dom'
 import './Navbar.css'
 
-function Navbar({ onNavigate, cartCount }) {
+function Navbar() {
+    const navigate = useNavigate()
     return (
         <header className="navbar" role="banner">
+            
             <button
                 className="navbar__logo"
-                onClick={() => onNavigate('home')}
+                onClick={() => navigate('/')}
                 aria-label="Ir al inicio"
             >
-                Nivet Bags
+                Nivet Bags {/* <img src="/images/logo.png" alt="Nivet Bags" className="navbar__logo-img" /> Sustituir el texto con este codigo para el logo  */}
             </button>
 
-            <nav classname="navbar__links" aria-label="Navegación principal">
+            <nav className="navbar__links" aria-label="Navegación principal">
                 <button
                     className="navbar__link"
-                    onClick={() => onNavigate('catalogue')}
+                    onClick={() => navigate('/catalogo')}
                 >
                     Catalogo
                 </button>

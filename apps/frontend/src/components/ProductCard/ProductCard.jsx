@@ -1,13 +1,16 @@
+import { useNavigate } from 'react-router-dom'
 import './ProductCard.css'
 
-function ProductCard({ product, onNavigate }) {
+function ProductCard({ product }) {
+    const navigate = useNavigate()
+
     return (
         <article
         className="product-card"
-        onClick={() => onNavigate('detail', product)}
+        onClick={() => navigate(`/producto/${product.id}`)}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && onNavigate('detail', product)}
+        onKeyDown={(e) => e.key === 'Enter' && navigate(`/producto/${product.id}`)}
         aria-label={`Ver ${product.name}`}
         >
             <div className="product-card__img-wrap">

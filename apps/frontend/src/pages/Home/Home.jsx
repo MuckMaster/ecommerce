@@ -3,7 +3,7 @@ import ProductCard from '../../components/ProductCard/ProductCard'
 import { carouselImages, products } from '../../data/products'
 import './Home.css'
 
-function Home ({ onNavigate }) {
+function Home () {
     const featured = products.slice(0,4)
 
     return(
@@ -12,7 +12,6 @@ function Home ({ onNavigate }) {
 
             <section className="home__featured" aria-label="Productos">
                 <div classname="home-featured-header">
-                    <h2 className="home__featured-title">Destacados</h2>
                 </div>
 
                 <div className="home__featured-grid">
@@ -20,7 +19,6 @@ function Home ({ onNavigate }) {
                         <ProductCard
                         key={product.id}
                         product={product}
-                        onNavigate={onNavigate}
                     />
                     ))}
                 </div>

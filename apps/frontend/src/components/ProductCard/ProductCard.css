@@ -1,6 +1,6 @@
 .product-card {
     cursor: pointer;
-    background: var(--white);
+    background: var(--cream);
     outline-offset: 2px;
 }
 
@@ -44,6 +44,12 @@
 }
 
 .product-card__info {
-  padding: 14px 0 10px;
+  padding: 10px;
   background: var(--cream);
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.product-card:hover .product-card__info {
+  opacity: 1;
 }
