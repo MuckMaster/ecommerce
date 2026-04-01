@@ -14,9 +14,9 @@ const getProducts = async (req, res) => {
 const getProductById = async (req, res) => {
 
     try {
-        const { q } = req.query;
-        const products = await productsService.searchProducts(q);
-        res.json(products);
+        const product = await productsService.getProductById(req.params.id);
+        if (!product) return res.status(404).json({ error: "Product not found" });
+        res.json(product);
     } catch (e) {
         console.error(e);
         res.status(500).json({ error: "Internal server error" });
@@ -61,7 +61,7 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
 
     try {
-        const product = await productsService.updateProduct(req.param.id, req.body);
+        const product = await productsService.updateProduct(req.params.id, req.body);
         res.json(product);
     } catch (e) {
         if (e.code === "P2025") {
