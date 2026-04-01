@@ -1,90 +1,275 @@
 export const products = [
   {
     id: 1,
-    name: 'Bolso Beige',
-    color: 'Beige',
-    price: 300,           
-    category: 'Tote',
-    subcategory: 'Artesanal',
+    name: 'MARINA',
+    color: 'Verde Agua',
+    price: 15,           
+    category: 'Totebag',
+    subcategory: 'Lino',
+    type: 'tela',
     images: [
-      '/images/bolso_beige/bolso_beige.jpg',
-      '/images/bolso_beige/bolso_beige_modelo.jpg',
-      '/images/bolso_beige/bolso_beige_2.jpg',
-      '/images/bolso_beige/bolso_beige_modelo_2.jpg',
+      '/images/MARINA/5.jpg',
+      '/images/MARINA/4.jpg',
+      '/images/MARINA/1.jpg',
+      '/images/MARINA/6.jpg',
     ],
 
     swatches: [
-      //* Aqui van los colores de los modelos en caso de que el cliente lo desee*//
+      { name: 'Verde Agua', css: '#7FB7A3' },
+      { name: 'Verde Caqui', css: '#6B705C' },
+      { name: 'Morado', css: '#6D597A' },
+      { name: 'Azul marino', css: '#2B3A6B' },
+      { name: 'Beige', css: '#D6CFC7' }
+
     ],
-    description: 'Bolso artesanal elaborado a mano con lino de primera calidad. Diseño atemporal que combina elegancia y funcionalidad para el día a día. Cada pieza es única e irrepetible.',
+
+    description: [
+      'Bolso de lino natural ligero, resistente y versàtil perfecto para la playa y como bolso shopper',
+      'Confeccionado con lino natural , un tejido cómodo y elegante de alta durabilidad y gran capacidad',
+      'Este bolso shopper es un accesorio de calidad y estilo para múltiples ocasiones: playa, compras, fin de semana'
+    ],
+
+    composition: {
+      exterior: 'lino lavado natural 230gm2, * OEKO-TEX® 100 certified',
+      interior: 'algodón 100%'
+    },
+
+    care: [
+      'Lavar en agua fría',
+      'No usar secadora'
+    ],
+
+     details: {
+      measures: '37 x 32 x 17 cm',
+      handles: 'Asas de algodón 100% espigado'
+    }
+    
   },
+
   {
     id: 2,
-    name: 'Bolso Celeste',
-    color: 'Celeste',
-    price: 300,
-    category: 'Tote',
-    subcategory: 'Artesanal',
-    images: [
-      '/images/bolso_celeste/bolso_celeste.jpg',
-      '/images/bolso_celeste/bolso_celeste_modelo.jpg',
-    ],
-    swatches: [
-      //* Aqui van los colores de los modelos en caso de que el cliente lo desee*//
-    ],
-    description: 'Bolso de tela. Asas reforzadas en algodón crudo. Bolsillo interior con cierre.',
-  },
-  {
-    id: 3,
-    name: 'Bolso Granate',
-    color: 'Granate',
-    price: 300,
-    category: 'Tote',
-    subcategory: 'Artesanal',
+    name: 'NAUTIC',
+    color: 'Verde Agua',
+    price: 15,           
+    category: 'Maxi ToteBag',
+    subcategory: 'Lino',
+    type: 'tela',
     images: [
       '/images/bolso_granate/bolso_granate.jpg',
-      '/images/bolso_granate/bolso_granate_modelo.jpg',
+      '/images/NAUTIC/2.jpg',
+      '/images/NAUTIC/1.jpg',
+      '/images/NAUTIC/3.jpg',
     ],
+
     swatches: [
-      //* Aqui van los colores de los modelos en caso de que el cliente lo desee*//
+      { name: 'Verde Agua', css: '#7FB7A3' },
+      { name: 'Verde Caqui', css: '#6B705C' },
+      { name: 'Morado', css: '#6D597A' },
+      { name: 'Azul marino', css: '#2B3A6B' },
+      { name: 'Beige', css: '#D6CFC7' }
+
     ],
-    description: 'Bolso tote en tono granate con asas en algodón natural. Perfecto para el verano.',
+
+    description: [
+      'TOTEBAG de lino natural ligero, resistente y versàtil perfecto para la playa y como bolso shopper',
+      'Confeccionado con lino natural , un tejido cómodo y elegante de alta durabilidad',
+      'Este bolso, de gran capacidad  y cierre con cremallera es un accesorio de calidad y estilo para múltiples ocasiones'
+    ],
+
+    composition: {
+      exterior: 'lino lavado natural 230gm2, * OEKO-TEX® 100 certified',
+      interior: 'algodón 100%'
+    },
+
+    care: [
+      'Lavar en agua fría',
+      'No usar secadora'
+    ],
+
+     details: {
+      measures: '54 x 44 x 7 cm',
+      handles: 'Asas de algodón 100% espigado'
+    }
+    
   },
+
+  {
+    id: 3,
+    name: 'HEURA',
+    color: 'Verde Agua',
+    price: 13,           
+    category: 'ToteBag',
+    subcategory: 'Lino',
+    type: 'tela',
+    images: [
+      '/images/HEURA/6.jpg',
+      '/images/HEURA/3.jpg',
+      '/images/HEURA/8.jpg',
+      '/images/HEURA/10.jpg',
+    ],
+
+    swatches: [
+      { name: 'Verde Agua', css: '#7FB7A3' },
+      { name: 'Verde Caqui', css: '#6B705C' },
+      { name: 'Morado', css: '#6D597A' },
+      { name: 'Azul marino', css: '#2B3A6B' },
+      { name: 'Beige', css: '#D6CFC7' }
+
+    ],
+
+    description: [
+      'Bolso de lino natural de diseño minimalista, perfecto para acompañarte en tu día a día.',
+      'Su textura ligera lo convierten en un complemento versátil y atemporal, ideal para cualquier ocasión.',
+      'Cuenta con un asa amplia y cómoda que se adapta al hombro, ofreciendo practicidad sin renunciar al estilo.',
+      'Su forma suave y espaciosa permite llevar todo lo esencial con facilidad, mientras que el cierre superior aporta seguridad y funcionalidad'
+    ],
+
+    composition: {
+      exterior: 'lino lavado natural 230gm2, * OEKO-TEX® 100 certified',
+      interior: 'algodón 100%'
+    },
+
+    care: [
+      'Lavar en agua fría',
+      'No usar secadora'
+    ],
+
+     details: {
+      measures: '45 x 26 cm',
+      handles: 'Asa media lateral: de 54x5 /  Asa larga para cruzar: 71x5'
+    }
+    
+  },
+
   {
     id: 4,
-    name: 'Bolso Azul',
-    color: 'Azul',
-    price: 200,
-    category: 'Bolso',
-    subcategory: 'Artesanal',
+    name: 'MINI HEURA',
+    color: 'Verde Agua',
+    price: 13,           
+    category: 'ToteBag',
+    subcategory: 'Lino',
+    type: 'tela',
     images: [
+      '/images/MINI_HEURA/2.jpg',
+      '/images/MINI_HEURA/1.jpg',
+      '/images/MINI_HEURA/3.jpg',
       '/images/mini_bolso_azul/mini_bolso_azul.jpg',
-      '/images/mini_bolso_azul/mini_bolso_azul_modelo.jpg',
-      '/images/mini_bolso_azul/mini_bolso_azul_2.jpg',
     ],
+
     swatches: [
-      //* Aqui van los colores de los modelos en caso de que el cliente lo desee*//
+      { name: 'Verde Agua', css: '#7FB7A3' },
+      { name: 'Verde Caqui', css: '#6B705C' },
+      { name: 'Morado', css: '#6D597A' },
+      { name: 'Azul marino', css: '#2B3A6B' },
+      { name: 'Beige', css: '#D6CFC7' }
+
     ],
-    description: 'Bolso de ante natural con cierre de cremallera y herrajes plateados. Suave al tacto.',
+
+    description: [
+      'Bolso de lino ligero y práctico, perfecto para el uso diario.',
+      'Su diseño sencillo y elegante lo convierte en el complemento perfecto para tu día a día.',
+      'Un básico con estilo que eleva cualquier look.'
+    ],
+
+    composition: {
+      exterior: 'lino natural, * OEKO-TEX® 100 certified',
+      interior: 'algodón 100%'
+    },
+
+    care: [
+      'Lavar en agua fría',
+      'No usar secadora'
+    ],
+
+     details: {
+      measures: '38 x 15 x 5 cm',
+      handles: 'Asa de 48 x 5'
+    }
+    
   },
+
   {
     id: 5,
-    name: 'Bolso Marron',
-    color: 'Marron',
-    price: 280,
-    category: 'Tote',
+    name: 'MAREA',
+    color: 'Camel',
+    price: 33,           
+    category: 'Ante pequeño',
     subcategory: 'Artesanal',
+    type: 'piel',
     images: [
-      '/images/mini_bolso_marron/mini_bolso_marron.jpg',
-      '/images/mini_bolso_azul/mini_bolso_marron_logo.jpg',
-      '/images/mini_bolso_azul/mini_bolso_marron_2.jpg',
-      '/images/mini_bolso_azul/mini_bolso_marron_zip.jpg',
+      '/images/BOLSO_PIEL/5.jpeg',
+      '/images/BOLSO_PIEL/IMG_4929.jpeg',
+      '/images/BOLSO_PIEL/6.jpeg',
+      '/images/BOLSO_PIEL/IMG_4927.jpeg',
     ],
+
     swatches: [
-      //* Aqui van los colores de los modelos en caso de que el cliente lo desee*//
+      
     ],
-    description: 'Bolso tote en tono natural con textura de lino. Versátil y elegante para cualquier ocasión.',
+
+    description: [
+      'Bolso de ante en tono camel, suave, elegante y sofisticado.',
+      'Su textura cálida y diseño minimalista lo convierten en el complemento perfecto para un look sofisticado y versátil',
+      'Cuenta con un cierre de cremallera metálica'
+    ],
+
+    composition: {
+      exterior: 'Piel de ante',
+      interior: 'algodón 100%'
+    },
+
+    care: [
+      
+    ],
+
+     details: {
+      measures: '38 x 17 x 6 cm',
+      handles: 'Asa de 42 x 5'
+    }
+    
   },
+
+  {
+    id: 6,
+    name: 'MAREA',
+    color: 'Rojo',
+    price: 33,           
+    category: 'Ante pequeño',
+    subcategory: 'Artesanal',
+    type: 'piel',
+    images: [
+      '/images/BOLSO_PIEL/IMG_4931.jpeg',
+      '/images/BOLSO_PIEL/IMG_4934.jpeg'
+    ],
+    
+    swatches: [
+      
+    ],
+
+    description: [
+      'Bolso de piel rojo, suave, elegante y sofisticado.',
+      'Su textura cálida y diseño minimalista lo convierten en el complemento perfecto para un look sofisticado y versátil',
+      'Cuenta con un cierre de cremallera metálica'
+    ],
+
+    composition: {
+      exterior: 'Piel de ante',
+      interior: 'algodón 100%'
+    },
+
+    
+    care: [
+      
+    ],
+    
+
+     details: {
+      measures: '38 x 17 x 6 cm',
+      handles: 'Asa de 42 x 5'
+    }
+    
+  },
+  
 ]
 
 

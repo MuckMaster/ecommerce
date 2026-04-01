@@ -53,7 +53,7 @@ function ProductDetail() {
                         <span>{product.subcategory}</span>
                     </div>
 
-                    <div className="detail__price">{product.price}€</div>
+                    <div className="detail__price">{product.price}€ en tienda sin IVA</div>
 
                     {/* Funcion de swatches de color */}
 
@@ -78,7 +78,9 @@ function ProductDetail() {
                         </>
                     )}
 
-                    <p className="detail__desc">{product.description}</p>
+                   {product.description.map((item, i) =>(
+                        <p className="detail__desc" key={i}>{item}</p>
+                    ))}
 
                     {/* Botón desactivado temporalmente - funcionalidad de carrito pendiente
                     <button className="detail__btn-cart">
@@ -87,6 +89,22 @@ function ProductDetail() {
                     */}
 
                     <div className="detail__accordions">
+                        <Accordion title="Composición y cuidados">
+                            <p><strong>Exterior: </strong>{product.composition.exterior}</p>
+                            <p><strong>Interior: </strong>{product.composition.interior}</p>
+                            
+                            {product.care.length > 0 && (
+                            <>
+                            {product.care.map((item, i) => (
+                                <p key={i}>· {item}</p>
+                            ))}
+                            </>
+                            )}
+                        </Accordion>
+                        <Accordion title={"Detalles"}>
+                            <p><strong>Medidas: </strong>{product.details.measures}</p>
+                            <p><strong>Asas: </strong>{product.details.handles}</p>
+                        </Accordion>
                         <Accordion title="Envios">
                             El envío tarda 3-4 días laborables.<br />
                             Coste de envío: 15€. Envío gratuito para pedidos superiores a 150€.
@@ -96,8 +114,9 @@ function ProductDetail() {
                             El artículo debe estar en perfecto estado y sin usar.
                         </Accordion>
                         <Accordion title="Contacto">
-                            ¿Tienes alguna duda? Escríbenos a ejemplo@email.com o síguenos en Instagram @ejemplo.
+                            ¿Tienes alguna duda? Escríbenos a comercial@rivetbag.com
                         </Accordion>
+                        
                     </div>
 
                 </div>

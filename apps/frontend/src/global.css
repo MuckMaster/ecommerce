@@ -7,6 +7,7 @@
 }
 
 :root {
+    --navbar: #f5f5dc; /* color de la navbar */
     --cream: #F5EFE8;      /* fondo principal */
     --sand: #EDE5DA;       /* bordes, hovers */
     --stone: #C9B8A4;      /* acentos terciarios, separadores */

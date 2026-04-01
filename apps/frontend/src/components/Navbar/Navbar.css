@@ -6,8 +6,13 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 48px;
-    background: var(--cream);
+    background: var(--navbar);
     border-bottom: 1px solid var(--sand);
+    transition: transform 0.3s ease;
+}
+
+.navbar-hidden {
+    transform: translateY(-100%)
 }
 
 .navbar__logo {
@@ -42,18 +47,75 @@
     border-bottom: 1px solid transparent;
     transition: border-color var(--transition);
     appearance: none;
+    list-style-type: none;
 }
 
 .navbar__link:hover {
     border-color: var(--dark);
 }
 
-/* Parametros del logo cuando se ponga este
+
 .navbar__logo-img {
-  height: 40px; 
+  height: 70px; 
   width: auto;
+  padding: 0px 48px;
 }
-*/
+
+.navbar__item {
+    list-style-type: none;
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dark);
+}
+
+.dropdown {
+    position: relative
+}
+
+.dropdown__menu {
+    position: absolute;
+    min-width: 180px;
+    top: 100%;
+    right: 0%;
+    background: var(--navbar);
+    padding: 10px;
+    margin: 0px 5px;
+    border: solid var(--dark) 1px;
+
+    /*animacion*/
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: all 0.25s ease;
+}
+
+
+.dropdown:hover .dropdown__menu {
+    display: block;
+}
+
+/*PC*/
+@media (hover: hover) and (pointer: fine) {
+    .dropdown:hover .dropdown__menu {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+}
+
+/*Movil*/
+@media (hover: none) {
+    .dropdown.active .dropdown__menu {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+}
 
 @media (max-width: 640px) {
     .navbar {

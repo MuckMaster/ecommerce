@@ -1,12 +1,14 @@
+/*
 .catalogue {
     padding-bottom: 20px;
 }
+    */
 
 .catalogue__header {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    padding: 48px 48px 24px;
+    padding: 20px 24px;
 }
 
 .catalogue__title {
@@ -26,8 +28,8 @@
 .catalogue__grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 2px;
-    padding: 0px;
+    gap: 0px 20px;
+    padding: 0px 20px;
 }
 
 @media (max-width: 1024px) {
@@ -37,7 +39,7 @@
     }
 
     .catalogue__header {
-        padding: 36px 24px 18px;
+        padding: 20px 24px;
     }
 }
 
@@ -48,7 +50,7 @@
     }
 
     .catalogue__header {
-        padding: 28px 12px 14px;
+        padding: 20px 12px;
     }
 
     .catalogue__title{

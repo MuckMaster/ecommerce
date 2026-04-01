@@ -22,12 +22,9 @@ function ProductCard({ product }) {
                 />
             </div>
 
-            <div className="product-card__info">
-                <div className="product-card__row">
+            <div className="product-card__info">          
                     <span className="product-card__name">{product.name}</span>
                     <span className="product-card__price">{product.price}€</span>
-                </div>
-                <span className="product-card__color">{product.color}</span>
             </div>
         </article>
     )
