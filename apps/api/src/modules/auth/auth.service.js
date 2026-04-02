@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { prisma } from "../../lib/prisma.js";
+import { mergeCart } from "../cart/cart.service.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_in_prod";
 const ACCES_TOKEN_TTL = "15m";
@@ -41,7 +42,7 @@ const safeUser = (user) => ({
 
 //SERVICES
 
-const register = async ({ name, email, password }) => {
+const register = async ({ name, email, password, sessionId }) => {
 
     const existing = await prisma.users.findUnique({ where: { email } });
     if (existing) {
@@ -66,6 +67,10 @@ const register = async ({ name, email, password }) => {
             expires_at: getExpiresAt(),
         },
     });
+
+    if(sessionId) {
+        await mergeCart(String(user.id), sessionId);
+    }
 
     return { user: safeUser(user), accessToken, refreshToken };
 

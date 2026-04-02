@@ -4,12 +4,13 @@ const register = async (req, res) => {
 
     try{
         const { name, email, password } = req.body;
+        const sessionId = req.headers["x-session-id"] || null;
 
         if (!name || !email || !password){
             return res.status(400).json({ error: "Missing required fields" });
         }
         
-        const result = await authService.register({ name, email, password });
+        const result = await authService.register({ name, email, password, sessionId });
         res.status(201).json(result);
     } catch (e) {
         if (e.code === "EMAIL_TAKEN") {
