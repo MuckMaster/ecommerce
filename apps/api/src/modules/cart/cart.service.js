@@ -30,7 +30,7 @@ const formatCart = (cart) => {
     const total = items.reduce((sum, item) => sum + item.line_total, 0);
 
     return {
-        id:stringify(cart.id),
+        id:String(cart.id),
         session_id: cart.session_id,
         user_id: cart.user_id ? String(cart.user_id) : null,
         items,
