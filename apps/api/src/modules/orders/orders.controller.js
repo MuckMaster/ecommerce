@@ -70,7 +70,7 @@ const webhook = async (req, res) => {
 
 const getOrders = async (req, res) => {
     try {
-        const orders = await ordersService.getOrders(req.usewrId);
+        const orders = await ordersService.getOrders(req.userId);
         res.json(orders);
     } catch (e) {
         console.error(e);

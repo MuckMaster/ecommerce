@@ -12,7 +12,7 @@ const cartRoutes = Router();
 
 cartRoutes.get("/", optionalAuth, getCart);
 cartRoutes.post("/items", optionalAuth, addItem);
-cartRoutes.put("/items/:itemdId", optionalAuth, updateItem);
+cartRoutes.put("/items/:itemId", optionalAuth, updateItem);
 cartRoutes.delete("/items/:itemId", optionalAuth, removeItem);
 cartRoutes.delete("/", optionalAuth, clearCart);
 

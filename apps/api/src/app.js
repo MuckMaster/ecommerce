@@ -8,6 +8,8 @@ import { cartRoutes } from "./modules/cart/cart.routes.js";
 import { contactRoutes } from "./modules/contact/contact.routes.js";
 import { ordersRoutes } from "./modules/orders/orders.routes.js";
 import { webhook } from "./modules/orders/orders.controller.js"
+import { variantsRoutes } from "./modules/variants/variants.routes.js";
+import { adminOrdersRoutes } from "./modules/admin/orders/admin-orders.routes.js";
 
 const app = express();
 
@@ -26,12 +28,16 @@ app.post(
 app.use(cors());
 app.use(express.json());
 
+app.use("/uploads", express.static("uploads"));
+
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productsRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use( "/api/cart", cartRoutes );
 app.use("/api/contact", contactRoutes);
 app.use("/api/orders", ordersRoutes);
+app.use("/api/variants", variantsRoutes);
+app.use("/api/admin/orders", adminOrdersRoutes);
 
 app.get("/health", async (req, res) => {
 
