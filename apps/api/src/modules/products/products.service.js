@@ -37,7 +37,9 @@ const formatProduct = (product) => ({
 
 const getProducts = async ({ status, featured, category } = {}) => {
 
-    const where = {};
+    const where = {
+        deleted_at: null,
+    };
     where.status = status ||"PUBLISHED";
 
     if (featured !== undefined) {
@@ -67,7 +69,10 @@ const getProducts = async ({ status, featured, category } = {}) => {
 const getProductById = async (id) => {
 
     const product = await prisma.products.findUnique({
-        where: { id: BigInt(id) },
+        where: { 
+            id: BigInt(id),
+            deleted_at: null
+        },
         include: {
             product_images: { orderBy: { sort_order: "asc" } },
             product_variants: { where: { is_active: true } },
@@ -86,6 +91,7 @@ const searchProducts = async (q) => {
     const products = await prisma.products.findMany({
         where: {
             status: "PUBLISHED",
+            deleted_at: null,
             OR: [
                 { name: { contains: q } },
                 { short_description: {contains: q } },
@@ -152,8 +158,9 @@ const updateProduct = async (id,data) => {
 };
 
 const deleteProduct = async (id) => {
-    await prisma.products.delete({
+    await prisma.products.update({
         where: { id: BigInt(id) },
+        data: { deleted_at: new Date() },
     });
 };
 

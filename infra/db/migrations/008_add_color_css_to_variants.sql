@@ -1,0 +1,1 @@
+ALTER TABLE product_variants ADD COLUMN color_css VARCHAR(255) DEFAULT NULL;
