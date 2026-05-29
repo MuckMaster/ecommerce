@@ -1,0 +1,95 @@
+.confirmed {
+  min-height: calc(100vh - 57px);
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 48px;
+}
+
+.confirmed__wrap {
+  max-width: 480px;
+  text-align: center;
+}
+
+.confirmed__icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--dark);
+  color: var(--cream);
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 28px;
+}
+
+.confirmed__title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  margin-bottom: 16px;
+}
+
+.confirmed__text {
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-bottom: 36px;
+}
+
+.confirmed__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.confirmed__btn-account {
+  width: 100%;
+  padding: 16px;
+  background: var(--dark);
+  border: 1px solid var(--dark);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cream);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  appearance: none;
+}
+
+.confirmed__btn-account:hover {
+  background: var(--cream);
+  color: var(--dark);
+}
+
+.confirmed__btn-catalogue {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 8px 0;
+  transition: color var(--transition);
+}
+
+.confirmed__btn-catalogue:hover {
+  color: var(--dark);
+}
+
+@media (max-width: 640px) {
+  .confirmed {
+    padding: 40px 16px;
+    align-items: flex-start;
+  }
+
+  .confirmed__title {
+    font-size: 1.8rem;
+  }
+}

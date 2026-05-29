@@ -27,6 +27,7 @@ html {
 }
 
 body {
+    background: #FFFFFF !important;
     font-family: var(--font-body);
     font-weight: 300;
     background: var(--cream);
@@ -44,4 +45,9 @@ button {
 img {
     display: block;
     max-width: 100%;
+}
+
+.navbar___links--open {
+    position: fixed !important;
+    z-index: 9999 !important;
 }

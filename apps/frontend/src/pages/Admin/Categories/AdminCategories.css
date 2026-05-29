@@ -1,0 +1,83 @@
+/* Layout de dos columnas: formulario + lista */
+.admin-categories__layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.admin-categories__form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-categories__list {
+  /* La lista no tiene card propia — cada item tiene su propio estilo */
+}
+
+.admin-categories__items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Item de categoría */
+.admin-category-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  padding: 16px 20px;
+  transition: background var(--transition);
+}
+
+/* Resalta el item que se está editando */
+.admin-category-item--active {
+  border-left: 3px solid var(--dark);
+}
+
+.admin-category-item__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.admin-category-item__name {
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: var(--dark);
+}
+
+.admin-category-item__slug {
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: var(--muted);
+}
+
+.admin-category-item__inactive {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c47a7a;
+}
+
+.admin-category-item__order {
+  font-size: 0.78rem;
+  color: var(--stone);
+  min-width: 32px;
+  text-align: center;
+}
+
+.admin-empty {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 24px 0;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .admin-categories__layout {
+    grid-template-columns: 1fr;
+  }
+}

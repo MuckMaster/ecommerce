@@ -1,0 +1,147 @@
+.admin-products__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.admin-table__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-btn--danger {
+  border-color: #c47a7a;
+  color: #c47a7a;
+}
+
+.admin-btn--danger:hover {
+  background: #c47a7a;
+  color: #fff;
+  border-color: #c47a7a;
+}
+
+/* Badge de estado del producto */
+.admin-product-status {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 3px 8px;
+}
+
+.admin-product-status--published { color: #3d7a3d; }
+.admin-product-status--draft { color: var(--muted); }
+
+/* Formulario */
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-form__row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.admin-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.admin-form__field--checkbox {
+  justify-content: flex-end;
+}
+
+.admin-form__label {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.admin-form__subtitle {
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dark);
+  margin-bottom: 16px;
+}
+
+/* Grid de imágenes */
+.admin-images-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.admin-image-card {
+  position: relative;
+  background: var(--sand);
+}
+
+.admin-image-card__img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-image-card__badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--dark);
+  color: var(--cream);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+}
+
+.admin-image-card__actions {
+  display: flex;
+  gap: 4px;
+  padding: 8px;
+  background: var(--cream);
+}
+
+/* Upload */
+.admin-upload__label {
+  display: inline-block;
+  padding: 10px 20px;
+  background: none;
+  border: 1px dashed var(--stone);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.admin-upload__label:hover {
+  border-color: var(--dark);
+  color: var(--dark);
+}
+
+.admin-upload__hint {
+  font-size: 0.72rem;
+  color: var(--stone);
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .admin-form__row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-images-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -2,24 +2,43 @@ export const products = [
   {
     id: 1,
     name: 'MARINA',
-    color: 'Verde Agua',
-    price: 15,           
+    price: 15,
+    public_price: '34,90',          
     category: 'Totebag',
     subcategory: 'Lino',
     type: 'tela',
     images: [
-      '/images/MARINA/5.jpg',
-      '/images/MARINA/4.jpg',
-      '/images/MARINA/1.jpg',
-      '/images/MARINA/6.jpg',
     ],
 
     swatches: [
-      { name: 'Verde Agua', css: '#7FB7A3' },
-      { name: 'Verde Caqui', css: '#6B705C' },
-      { name: 'Morado', css: '#6D597A' },
-      { name: 'Azul marino', css: '#2B3A6B' },
-      { name: 'Beige', css: '#D6CFC7' }
+      {
+        name: 'Verde Agua', 
+        css: '#7FB7A3',
+        images: [
+          '/images/MARINA/5.jpg',
+        ]
+      },
+      { name: 'Verde Caqui',
+        css: '#6B705C',
+        images: [
+          '/images/MARINA/4.jpg',
+        ] 
+      },
+      { name: 'Beige', 
+        css: '#D6CFC7',
+        images: [
+          '/images/MARINA/1.jpg',
+          '/images/MARINA/2.jpg',
+          '/images/MARINA/3.jpg',
+        ]
+      },
+      { name: 'Morado', 
+        css: '#6D597A',
+        images: [
+          '/images/MARINA/6.jpg',
+          '/images/MARINA/7.jpeg',
+        ]
+       },
 
     ],
 
@@ -49,24 +68,18 @@ export const products = [
   {
     id: 2,
     name: 'NAUTIC',
-    color: 'Verde Agua',
-    price: 15,           
+    price: 15,
+    public_price: '34,90',           
     category: 'Maxi ToteBag',
     subcategory: 'Lino',
     type: 'tela',
     images: [
-      '/images/bolso_granate/bolso_granate.jpg',
       '/images/NAUTIC/2.jpg',
+      '/images/bolso_granate/bolso_granate.jpg',
       '/images/NAUTIC/1.jpg',
-      '/images/NAUTIC/3.jpg',
     ],
 
     swatches: [
-      { name: 'Verde Agua', css: '#7FB7A3' },
-      { name: 'Verde Caqui', css: '#6B705C' },
-      { name: 'Morado', css: '#6D597A' },
-      { name: 'Azul marino', css: '#2B3A6B' },
-      { name: 'Beige', css: '#D6CFC7' }
 
     ],
 
@@ -96,25 +109,30 @@ export const products = [
   {
     id: 3,
     name: 'HEURA',
-    color: 'Verde Agua',
-    price: 13,           
+    price: 13,
+    public_price: '28,60',           
     category: 'ToteBag',
     subcategory: 'Lino',
     type: 'tela',
     images: [
-      '/images/HEURA/6.jpg',
-      '/images/HEURA/3.jpg',
-      '/images/HEURA/8.jpg',
-      '/images/HEURA/10.jpg',
     ],
-
     swatches: [
-      { name: 'Verde Agua', css: '#7FB7A3' },
-      { name: 'Verde Caqui', css: '#6B705C' },
-      { name: 'Morado', css: '#6D597A' },
-      { name: 'Azul marino', css: '#2B3A6B' },
-      { name: 'Beige', css: '#D6CFC7' }
-
+      { name: 'Beige',
+        css: '#D6CFC7',
+        images: [
+          '/images/HEURA/6.jpg',
+          '/images/HEURA/3.jpg',
+          '/images/HEURA/2.jpg',
+        ]
+      },
+      { name: 'Azul marino', 
+        css: '#2B3A6B',
+        images: [
+          '/images/HEURA/8.jpg',
+          '/images/HEURA/7.jpg',
+          '/images/HEURA/heura.jpeg',
+        ]
+      },
     ],
 
     description: [
@@ -144,8 +162,8 @@ export const products = [
   {
     id: 4,
     name: 'MINI HEURA',
-    color: 'Verde Agua',
-    price: 13,           
+    price: 13,
+    public_price: '28,60',           
     category: 'ToteBag',
     subcategory: 'Lino',
     type: 'tela',
@@ -153,15 +171,10 @@ export const products = [
       '/images/MINI_HEURA/2.jpg',
       '/images/MINI_HEURA/1.jpg',
       '/images/MINI_HEURA/3.jpg',
-      '/images/mini_bolso_azul/mini_bolso_azul.jpg',
+      '/images/MINI_HEURA/mini_heura.jpeg'
     ],
 
     swatches: [
-      { name: 'Verde Agua', css: '#7FB7A3' },
-      { name: 'Verde Caqui', css: '#6B705C' },
-      { name: 'Morado', css: '#6D597A' },
-      { name: 'Azul marino', css: '#2B3A6B' },
-      { name: 'Beige', css: '#D6CFC7' }
 
     ],
 
@@ -190,15 +203,15 @@ export const products = [
 
   {
     id: 5,
-    name: 'MAREA',
+    name: 'MAREA PIEL SERRAJE',
     color: 'Camel',
-    price: 33,           
+    price: 25,
+    public_price: 55,           
     category: 'Ante pequeño',
     subcategory: 'Artesanal',
     type: 'piel',
     images: [
       '/images/BOLSO_PIEL/5.jpeg',
-      '/images/BOLSO_PIEL/IMG_4929.jpeg',
       '/images/BOLSO_PIEL/6.jpeg',
       '/images/BOLSO_PIEL/IMG_4927.jpeg',
     ],
@@ -231,15 +244,16 @@ export const products = [
 
   {
     id: 6,
-    name: 'MAREA',
+    name: 'MAREA PIEL ROJO',
     color: 'Rojo',
-    price: 33,           
+    price: 33,
+    public_price: 72,           
     category: 'Ante pequeño',
     subcategory: 'Artesanal',
     type: 'piel',
     images: [
-      '/images/BOLSO_PIEL/IMG_4931.jpeg',
-      '/images/BOLSO_PIEL/IMG_4934.jpeg'
+      '/images/BOLSO_PIEL/marea.jpeg',
+      '/images/BOLSO_PIEL/mares.jpeg'
     ],
     
     swatches: [
@@ -266,6 +280,85 @@ export const products = [
      details: {
       measures: '38 x 17 x 6 cm',
       handles: 'Asa de 42 x 5'
+    }
+    
+  },
+
+  {
+    id: 7,
+    name: 'MENORCA',
+    price: 8,
+    public_price: '17,60',           
+    category: 'ToteBag',
+    subcategory: 'Lino',
+    type: 'tela',
+    images: [
+      '/images/MENORCA/1.jpeg'
+    ],
+
+    swatches: [
+
+    ],
+
+    description: [
+      'Bolso de lino ligero y práctico, perfecto para el uso diario.',
+      'Su diseño sencillo y elegante lo convierte en el complemento perfecto para tu día a día.',
+      'Un básico con estilo que eleva cualquier look.'
+    ],
+
+    composition: {
+      exterior: 'lino natural, * OEKO-TEX® 100 certified',
+      interior: 'algodón 100%'
+    },
+
+    care: [
+      'Lavar en agua fría',
+      'No usar secadora'
+    ],
+
+     details: {
+      measures: '38 x 15 x 5 cm',
+      handles: 'Asa de 48 x 5'
+    }
+    
+  },
+
+  {
+    id: 8,
+    name: 'BASI',
+    price: 6,
+    public_price: 13,           
+    category: 'ToteBag',
+    subcategory: 'Lino',
+    type: 'tela',
+    images: [
+      '/images/BASI/1.jpeg',
+      '/images/BASI/2.jpeg'
+    ],
+
+    swatches: [
+
+    ],
+
+    description: [
+      'Bolso de lino ligero y práctico, perfecto para el uso diario.',
+      'Su diseño sencillo y elegante lo convierte en el complemento perfecto para tu día a día.',
+      'Un básico con estilo que eleva cualquier look.'
+    ],
+
+    composition: {
+      exterior: 'lino natural, * OEKO-TEX® 100 certified',
+      interior: 'algodón 100%'
+    },
+
+    care: [
+      'Lavar en agua fría',
+      'No usar secadora'
+    ],
+
+     details: {
+      measures: '38 x 15 x 5 cm',
+      handles: 'Asa de 48 x 5'
     }
     
   },

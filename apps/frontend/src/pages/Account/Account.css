@@ -1,0 +1,155 @@
+.account {
+  min-height: calc(100vh - 57px);
+  background: var(--cream);
+  padding: 60px 48px;
+}
+
+.account__wrap {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.account__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 48px;
+}
+
+.account__title {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+}
+
+.account__logout {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  border-bottom: 1px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.account__logout:hover {
+  color: var(--dark);
+  border-color: var(--dark);
+}
+
+.account__section {
+  margin-bottom: 48px;
+}
+
+.account__section-title {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--sand);
+}
+
+.account__card {
+  background: var(--white);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.account__field {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.account__field-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.account__field-value {
+  font-size: 0.9rem;
+  color: var(--dark);
+}
+
+.account__empty {
+  background: var(--white);
+  padding: 40px 28px;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.account__orders {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.account__order {
+  background: var(--white);
+  padding: 18px 28px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.account__order:hover {
+  background: var(--sand);
+}
+
+.account__order-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  gap: 16px;
+}
+
+.account__order-id {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.account__order-status {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.account__order-total {
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .account {
+    padding: 40px 16px;
+  }
+
+  .account__title {
+    font-size: 1.8rem;
+  }
+
+  .account__field {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
