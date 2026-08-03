@@ -2,24 +2,23 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+// Seeder principal — por ahora vacío porque la BD ya tiene datos de Prisma/seeds
+// Si necesitamos seeds de prueba, los añadimos aquí con php artisan db:seed
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // La BD ya está poblada por las migraciones y seeds de Prisma
+        // que están en infra/db/seeds/
+        //
+        // Para añadir un admin de prueba en desarrollo, descomenta:
+        // \App\Models\User::create([
+        //     'name'          => 'Admin',
+        //     'email'         => 'admin@test.com',
+        //     'password_hash' => \Illuminate\Support\Facades\Hash::make('admin123'),
+        //     'role'          => 'ADMIN',
+        // ]);
     }
 }

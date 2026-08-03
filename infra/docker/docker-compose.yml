@@ -35,12 +35,13 @@ services:
       DB_DATABASE: ecommerce_bolsos
       DB_USERNAME: "1234"
       DB_PASSWORD: "1234"
+    ports:
+      - "8000:8000"
     depends_on:
       mysql:
         condition: service_healthy
     networks:
       - ecommerce_net
-    command: ["bash", "-lc", "php -v && composer -V && tail -f /dev/null"]
 
   api:
     build:
@@ -51,6 +52,7 @@ services:
     volumes:
       - ../../apps/api:/app
       - /app/node_modules
+      - ../../apps/api/uploads:/app/uploads
     env_file:
       - ../../apps/api/.env.docker
     ports:
