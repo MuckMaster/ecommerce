@@ -12,6 +12,8 @@ class UserSession extends Model
 {
     protected $table = 'user_sessions';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'user_id',
         'refresh_token_hash',  // SHA-256 del refresh token real

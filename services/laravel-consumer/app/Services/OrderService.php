@@ -113,6 +113,7 @@ class OrderService
             'user_id'                => $userId ?: null,
             'email'                  => $data['email'],
             'status'                 => 'PENDING',
+            'currency'               => 'EUR',
             'subtotal_cents'         => $subtotalCents,
             'shipping_cents'         => $shippingCents,
             'discount_cents'         => 0,
