@@ -303,6 +303,11 @@
   color: var(--stone);
 }
 
+.admin-order-detail__variant {
+  color: #888;
+  font-size: 0.9em;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .admin-order-detail__grid {

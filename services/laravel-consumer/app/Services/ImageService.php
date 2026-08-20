@@ -36,48 +36,80 @@ class ImageService
         ];
     }
 
-    // Sube una imagen para un producto y la guarda en el disco 'uploads'
-    // Si is_primary es true, desmarca la imagen primaria anterior
-    public function uploadProductImage(string $productId, UploadedFile $file, ?string $altText, bool $isPrimary): array
+    // Sube una imagen al servidor y crea el registro en BD
+    // Ahora también acepta $variantId para asociar la imagen a una variante concreta
+    public function uploadProductImage(
+        string $productId, 
+        UploadedFile $file, 
+        string $altText = null, 
+        bool $isPrimary = false,
+        ?string $variantId = null   // NUEVO: opcional, ID de la variante a la que pertenece la imagen
+    ): array
     {
-        // Verificamos que el producto existe antes de guardar el archivo
+        // Verificamos que el producto existe
         $product = Product::find($productId);
         if (!$product) {
+            // Si el producto no existe, borramos el archivo que ya se subió para no dejar basura
+            Storage::delete($file->getPathname());
             throw new AppException('Product not found', 'PRODUCT_NOT_FOUND');
         }
 
-        // Generamos un nombre de archivo aleatorio (igual que Node.js: 8 bytes hex + extensión)
-        $extension = $file->getClientOriginalExtension();
-        $filename  = bin2hex(random_bytes(8)) . '.' . $extension;
-
-        // Guardamos el archivo en public/uploads/products/
-        // El disco 'uploads' tiene root = public_path('uploads')
-        Storage::disk('uploads')->putFileAs('products', $file, $filename);
-
-        if ($isPrimary) {
-            // Si esta imagen es la primaria, desmarcamos cualquier otra imagen primaria del producto
-            ProductImage::where('product_id', $productId)
-                ->where('is_primary', true)
-                ->update(['is_primary' => false]);
+        // Si nos pasan un variant_id, verificamos que exista Y pertenezca al producto
+        // Esto evita que se asocie una imagen a una variante de otro producto
+        if ($variantId) {
+            $variant = \App\Models\ProductVariant::where('id', $variantId)
+                ->where('product_id', $productId)
+                ->first();
+            
+            if (!$variant) {
+                throw new AppException('Variant not found', 'VARIANT_NOT_FOUND');
+            }
         }
 
-        // Calculamos el sort_order siguiente (después de la última imagen)
-        $lastSortOrder = ProductImage::where('product_id', $productId)
-            ->max('sort_order');
-        $sortOrder = $lastSortOrder !== null ? $lastSortOrder + 1 : 0;
+        // Si esta imagen se marca como principal, quitamos el flag de las demás
+        // Solo puede haber una imagen principal por producto (o por variante si tiene variant_id)
+        if ($isPrimary) {
+            $query = ProductImage::where('product_id', $productId)
+                ->where('is_primary', true);
+            
+            // Si es imagen de variante, el flag "principal" es dentro de esa variante
+            if ($variantId) {
+                $query->where('variant_id', $variantId);
+            } else {
+                $query->whereNull('variant_id');
+            }
+            
+            $query->update(['is_primary' => false]);
+        }
 
+        // Calculamos el sort_order siguiente para que la imagen aparezca al final
+        $lastImage = ProductImage::where('product_id', $productId)
+            ->when($variantId, fn($q) => $q->where('variant_id', $variantId))
+            ->when(!$variantId, fn($q) => $q->whereNull('variant_id'))
+            ->orderBy('sort_order', 'desc')
+            ->first();
+        
+        $sortOrder = $lastImage ? $lastImage->sort_order + 1 : 0;
+
+        // Guardamos el archivo físico en public/uploads/products/
+        // Generamos el nombre PRIMERO y lo usamos tanto para el move como para la URL
+        // Usamos storeAs con el disco 'uploads' que ya apunta a public/uploads/
+        $filename = bin2hex(random_bytes(8)) . '.' . $file->getClientOriginalExtension();
+        $file->storeAs('products', $filename, 'uploads');
+
+
+        // Guardamos la imagen en BD con los nuevos campos
         $image = ProductImage::create([
             'product_id' => $productId,
-            'url'        => $this->getPublicUrl($filename),
-            'alt_text'   => $altText ?: $product->name, // fallback al nombre del producto
+            'variant_id' => $variantId,          // NUEVO: puede ser null si es del producto
+            'url' => $this->getPublicUrl($filename),
+            'alt_text' => $altText ?? $product->name,
             'sort_order' => $sortOrder,
             'is_primary' => $isPrimary,
-            'created_at' => now(),
         ]);
 
         return $this->formatImage($image);
     }
-
     // Marca una imagen como la primaria del producto, desmarcando las demás
     public function setPrimaryImage(string $productId, string $imageId): array
     {
@@ -114,5 +146,34 @@ class ImageService
         }
 
         $image->delete();
+    }
+
+    // Reasigna una imagen existente a una variante (o al producto general si variant_id es null)
+    // Útil cuando el admin quiere mover imágenes entre variantes o convertir imágenes
+    // del producto en imágenes de una variante concreta
+    public function reassignImage(string $imageId, ?string $variantId): array
+    {
+        $image = ProductImage::find($imageId);
+        if (!$image) {
+            throw new AppException('Image not found', 'IMAGE_NOT_FOUND');
+        }
+
+        // Si nos dan variant_id, verificamos que la variante existe Y pertenece al mismo producto
+        // Esto evita mover una imagen a una variante de otro producto
+        if ($variantId) {
+            $variant = \App\Models\ProductVariant::where('id', $variantId)
+                ->where('product_id', $image->product_id)
+                ->first();
+
+            if (!$variant) {
+                throw new AppException('Variant not found or does not belong to this product', 'VARIANT_NOT_FOUND');
+            }
+        }
+
+        // Actualizamos solo el campo variant_id, el resto se mantiene
+        $image->variant_id = $variantId;
+        $image->save();
+
+        return $this->formatImage($image);
     }
 }

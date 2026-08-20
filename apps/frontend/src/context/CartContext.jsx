@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { useAuth } from './AuthContext'
+import { API_URL } from '../config.js'
 
 const CartContext = createContext(null)
 
@@ -42,7 +43,7 @@ export function CartProvider({ children }) {
     const fetchCart = useCallback(async () => {
         setLoading(true)
         try {
-            const res = await fetch('/api/cart', { headers: cartHeaders })
+            const res = await fetch(`${API_URL}/api/cart`, { headers: cartHeaders })
             if (res.ok) {
                 const data = await res.json()
                 setCart(data)
@@ -60,7 +61,7 @@ export function CartProvider({ children }) {
 
     async function addItem(productId, qty = 1, variantId = null) {
         try {
-            const res = await fetch('/api/cart/items', {
+            const res = await fetch(`${API_URL}/api/cart/items`, {
                 method: 'POST',
                 headers: cartHeaders,
                 body: JSON.stringify({
@@ -79,7 +80,7 @@ export function CartProvider({ children }) {
 
     async function updateItem(itemId, qty) {
         try {
-            const res = await fetch(`/api/cart/items/${itemId}`, {
+            const res = await fetch(`${API_URL}/api/cart/items/${itemId}`, {
                 method: 'PUT',
                 headers: cartHeaders,
                 body: JSON.stringify({ qty })
@@ -94,7 +95,7 @@ export function CartProvider({ children }) {
 
     async function removeItem(itemId) {
         try {
-            const res = await fetch(`/api/cart/items/${itemId}`, {
+            const res = await fetch(`${API_URL}/api/cart/items/${itemId}`, {
                 method: 'DELETE',
                 headers: cartHeaders
             })
@@ -107,7 +108,7 @@ export function CartProvider({ children }) {
     async function clearCart() {
 
         try {
-            const res = await fetch('/api/cart',{
+            const res = await fetch(`${API_URL}/api/cart`,{
                 method:'DELETE',
                 headers: cartHeaders
             })

@@ -55,6 +55,8 @@ Route::prefix('products')->group(function () {
         ->middleware([AuthMiddleware::class, RequireRoleMiddleware::class . ':ADMIN']);
     Route::delete('/{id}/images/{imageId}', [ImageController::class, 'destroy'])
         ->middleware([AuthMiddleware::class, RequireRoleMiddleware::class . ':ADMIN']);
+    Route::patch('/{id}/images/{imageId}', [ImageController::class, 'update'])
+        ->middleware([AuthMiddleware::class, RequireRoleMiddleware::class . ':ADMIN']);
 
     // ─── Variantes (anidadas bajo productos) ──────────────────
     // GET público para que el frontend pueda cargar swatches

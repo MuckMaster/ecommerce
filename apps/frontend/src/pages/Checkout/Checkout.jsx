@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
+import { API_URL } from '../../config.js'
 import './Checkout.css'
 
 function Checkout() {
@@ -59,7 +60,7 @@ function Checkout() {
     }
 
     try {
-      const res = await fetch('/api/orders/checkout', {
+      const res = await fetch(`${API_URL}/api/orders/checkout`, {
         method: 'POST',
         headers,
         body: JSON.stringify(body)

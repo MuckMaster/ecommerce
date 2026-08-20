@@ -196,7 +196,14 @@ function AdminOrderDetail() {
             <tbody>
               {order.items.map(item => (
                 <tr key={item.id}>
-                  <td>{item.product?.name || 'Producto eliminado'}</td>
+                  <td>
+                      {/* El JSON trae el nombre en 'product_name', no en un objeto 'product' anidado */}
+                      {item.product_name || 'Producto eliminado'}
+                      {/* La variante llega como 'variant' (ej: "rojo"); solo la pintamos si existe */}
+                      {item.variant && (
+                        <span className="admin-order-detail__variant"> · {item.variant}</span>
+                      )}
+                  </td>
                   <td>{item.qty}</td>
                   <td>{item.unit_price}€</td>
                   <td>{item.line_total}€</td>

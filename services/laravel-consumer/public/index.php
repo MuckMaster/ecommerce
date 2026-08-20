@@ -10,9 +10,9 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 }
 
 // Cargamos el autoloader de Composer (todas las clases del proyecto y sus dependencias)
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__.'/../../laravel-app/vendor/autoload.php';
 
 // Bootstrapeamos la aplicación y manejamos la petición HTTP entrante
-$app = require_once __DIR__.'/../bootstrap/app.php';
+$app = require_once __DIR__.'/../../laravel-app/bootstrap/app.php';
 
 $app->handleRequest(Request::capture());

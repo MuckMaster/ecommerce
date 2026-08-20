@@ -85,13 +85,36 @@ class ProductService
             'id'         => (string) $variant->id,
             'product_id' => (string) $variant->product_id,
             'sku'        => $variant->sku,
-            'color'      => $variant->color,
-            'color_css'  => $variant->color_css,
+            'name'      => $variant->color,
+            'css'       => $variant->color_css ?: $this->defaultColorCss($variant->color),
             'price'      => $variant->price_cents ? $this->centsToEuros($variant->price_cents) : null,
             'stock_qty'  => $variant->stock_qty,
             'is_active'  => $variant->is_active,
         ];
     }
+
+    // Mapa de colores por defecto para cuando color_css es null
+// Debe ser idéntico al de VariantService para consistencia entre endpoints
+private function defaultColorCss(string $color): string
+{
+    $map = [
+        'negro'    => '#000000',
+        'blanco'   => '#FFFFFF',
+        'rojo'     => '#DC143C',
+        'azul'     => '#1E90FF',
+        'verde'    => '#228B22',
+        'amarillo' => '#FFD700',
+        'naranja'  => '#FF8C00',
+        'marron'   => '#8B4513',
+        'beige'    => '#F5F5DC',
+        'gris'     => '#808080',
+        'rosa'     => '#FFC0CB',
+        'morado'   => '#9370DB',
+    ];
+    
+    $key = strtolower(trim($color));
+    return $map[$key] ?? '#CCCCCC';
+}
 
     // ─── Métodos públicos ─────────────────────────────────────────────────────
 

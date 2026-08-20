@@ -10,12 +10,15 @@ import {
 import {
     uploadProductImage,
     setPrimaryImage,
-    deleteProductImage
+    deleteProductImage,
+    reassignImage
 } from "./images.controller.js";
+
 import { productVariantsRoutes } from "../variants/variants.routes.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
 import { uploadImage } from "../../lib/uploads.js";
+
 
 const productsRoutes = Router();
 
@@ -47,6 +50,12 @@ productsRoutes.delete(
   authMiddleware,
   requireRole("ADMIN"),
   deleteProductImage
+);
+productsRoutes.patch(
+    "/:id/images/:imageId",
+    authMiddleware,
+    requireRole("ADMIN"),
+    reassignImage
 );
 
 // Variantes anidadas bajo productos

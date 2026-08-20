@@ -20,6 +20,7 @@ class ImageController extends Controller
 
     // POST /api/products/:id/images — solo ADMIN
     // Sube una imagen para el producto — equivalente a multer + uploadProductImage
+    // AHORA también acepta variant_id opcional para asociar la imagen a una variante
     public function store(Request $request, string $id): JsonResponse
     {
         try {
@@ -44,33 +45,51 @@ class ImageController extends Controller
             $altText   = $request->input('alt_text');
             // is_primary puede llegar como string "true" o boolean true — normalizamos
             $isPrimary = $request->input('is_primary') === 'true' || $request->input('is_primary') === true;
+            
+            // NUEVO: variant_id opcional para imágenes asociadas a variantes
+            // Si viene, la imagen "pertenecerá" a esa variante en lugar de al producto en general
+            $variantId = $request->input('variant_id');
 
-            $image = $this->imageService->uploadProductImage($id, $file, $altText, $isPrimary);
+            $image = $this->imageService->uploadProductImage($id, $file, $altText, $isPrimary, $variantId);
             return response()->json($image, 201);
 
         } catch (AppException $e) {
             if ($e->getErrorCode() === 'PRODUCT_NOT_FOUND') {
                 return response()->json(['error' => 'Product not found'], 404);
             }
-            \Log::error($e);
-            return response()->json(['error' => 'Internal server error'], 500);
-        }
-    }
-
-    // PUT /api/products/:id/images/:imageId/primary — solo ADMIN
-    public function setPrimary(string $id, string $imageId): JsonResponse
-    {
-        try {
-            $image = $this->imageService->setPrimaryImage($id, $imageId);
-            return response()->json($image);
-        } catch (AppException $e) {
-            if ($e->getErrorCode() === 'IMAGE_NOT_FOUND') {
-                return response()->json(['error' => 'Image not found'], 404);
+            // NUEVO: manejo del error cuando la variante no existe
+            if ($e->getErrorCode() === 'VARIANT_NOT_FOUND') {
+                return response()->json(['error' => 'Variant not found'], 404);
             }
             \Log::error($e);
             return response()->json(['error' => 'Internal server error'], 500);
         }
     }
+
+    // Cambia cuál es la imagen principal entre las que YA están subidas
+// Ruta: PUT /{id}/images/{imageId}/primary
+public function setPrimary(string $id, string $imageId): JsonResponse
+{
+    try {
+        // Llamamos al service pasándole los dos IDs que vienen en la URL:
+        //   $id      → el producto  ({id} en la ruta)
+        //   $imageId → la imagen    ({imageId} en la ruta)
+        $image = $this->imageService->setPrimaryImage($id, $imageId);
+
+        // 200 (no 201) porque NO estamos creando nada nuevo,
+        // solo modificando el estado de una imagen que ya existía
+        return response()->json($image, 200);
+
+    } catch (AppException $e) {
+        // Si el service no encontró la imagen, lo traducimos a un 404 limpio
+        if ($e->getErrorCode() === 'IMAGE_NOT_FOUND') {
+            return response()->json(['error' => 'Image not found'], 404);
+        }
+        // Cualquier otro error: lo registramos y devolvemos 500 genérico
+        \Log::error($e);
+        return response()->json(['error' => 'Internal server error'], 500);
+    }
+}
 
     // DELETE /api/products/:id/images/:imageId — solo ADMIN
     public function destroy(string $id, string $imageId): JsonResponse
@@ -81,6 +100,29 @@ class ImageController extends Controller
         } catch (AppException $e) {
             if ($e->getErrorCode() === 'IMAGE_NOT_FOUND') {
                 return response()->json(['error' => 'Image not found'], 404);
+            }
+            \Log::error($e);
+            return response()->json(['error' => 'Internal server error'], 500);
+        }
+    }
+
+    // PATCH /api/products/:id/images/:imageId — solo ADMIN
+    // Reasigna una imagen a una variante o la desvincula (variant_id = null)
+    public function update(Request $request, string $id, string $imageId): JsonResponse
+    {
+        try {
+            // variant_id puede ser null explícitamente para desvincular de una variante
+            // Usamos has() en vez de input() para distinguir "no enviado" de "enviado como null"
+            $variantId = $request->input('variant_id');
+
+            $image = $this->imageService->reassignImage($imageId, $variantId);
+            return response()->json($image);
+        } catch (AppException $e) {
+            if ($e->getErrorCode() === 'IMAGE_NOT_FOUND') {
+                return response()->json(['error' => 'Image not found'], 404);
+            }
+            if ($e->getErrorCode() === 'VARIANT_NOT_FOUND') {
+                return response()->json(['error' => 'Variant not found'], 404);
             }
             \Log::error($e);
             return response()->json(['error' => 'Internal server error'], 500);

@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Contact.css'
-
-const API_URL = 'http://localhost:3000'
+import { API_URL } from '../../config.js'   // ajusta los ../ según la profundidad de cada archivo
 
 function Contact() {
     const navigate = useNavigate()

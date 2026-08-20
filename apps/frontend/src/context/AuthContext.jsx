@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react'
-
-const API_URL = 'http://localhost:3000'
+import { API_URL } from '../config.js'   // ajusta los ../ según la profundidad de cada archivo
 const AuthContext = createContext(null)
 
 export function useAuth() {

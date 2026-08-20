@@ -1,4 +1,6 @@
-export const API_URL = 'http://localhost:3000'
+// import.meta.env.VITE_API_URL lo defines al compilar para producción;
+// si no existe (desarrollo), usa tu Laravel local de siempre
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 // Helper para construir la URL completa de una imagen.
 // Las imágenes vienen como rutas relativas (/uploads/products/...)

@@ -55,4 +55,29 @@ const deleteProductImage = async (req, res) => {
   }
 };
 
-export { uploadProductImage, setPrimaryImage, deleteProductImage };
+// PATCH /api/products/:id/images/:imageId — solo ADMIN
+// Reasigna una imagen a una variante o la desvincula (variantId = null)
+const reassignImage = async (req, res) => {
+    try {
+        // variantId puede ser null explícitamente para desvincular
+        const { variant_id } = req.body;
+
+        const image = await imagesService.reassignImage(
+            req.params.imageId,
+            variant_id
+        );
+
+        res.json(image);
+    } catch (e) {
+        if (e.code === "IMAGE_NOT_FOUND") {
+            return res.status(404).json({ error: "Image not found" });
+        }
+        if (e.code === "VARIANT_NOT_FOUND") {
+            return res.status(404).json({ error: "Variant not found" });
+        }
+        console.error(e);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+export { uploadProductImage, setPrimaryImage, deleteProductImage, reassignImage };

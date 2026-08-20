@@ -27,6 +27,7 @@ services:
     working_dir: /var/www
     volumes:
       - ../../services/laravel-consumer:/var/www
+      - /var/www/vendor
     environment:
       APP_ENV: local
       DB_CONNECTION: mysql

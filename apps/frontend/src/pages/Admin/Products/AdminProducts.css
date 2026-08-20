@@ -136,6 +136,13 @@
   margin-top: 8px;
 }
 
+.admin-image-card__reassign {
+  width: 100%;
+  font-size: 0.72rem;
+  padding: 6px 8px;
+  margin-top: 4px;
+}
+
 @media (max-width: 768px) {
   .admin-form__row {
     grid-template-columns: 1fr;

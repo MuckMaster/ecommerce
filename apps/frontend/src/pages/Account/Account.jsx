@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import './Account.css'
-
-const API_URL = 'http://localhost:3000'
+import { API_URL } from '../../config.js'   // ajusta los ../ según la profundidad de cada archivo
 
 function Account() {
   const navigate = useNavigate()

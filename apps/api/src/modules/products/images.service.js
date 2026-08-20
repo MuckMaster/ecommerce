@@ -93,4 +93,58 @@ const deleteProductImage = async (imageId) => {
   });
 };
 
-export { uploadProductImage, setPrimaryImage, deleteProductImage };
+// Reasigna una imagen existente a una variante (o al producto general si variantId es null)
+// Útil cuando el admin quiere mover imágenes entre variantes o convertir imágenes
+// del producto en imágenes de una variante concreta
+const reassignImage = async (imageId, variantId) => {
+    // Buscamos la imagen para verificar que existe y obtener su product_id
+    const image = await prisma.product_images.findUnique({
+        where: { id: BigInt(imageId) },
+    });
+
+    if (!image) {
+        const error = new Error("Image not found");
+        error.code = "IMAGE_NOT_FOUND";
+        throw error;
+    }
+
+    // Si nos dan variantId, verificamos que la variante existe Y pertenece al mismo producto
+    // Esto evita mover una imagen a una variante de otro producto
+    if (variantId) {
+        const variant = await prisma.product_variants.findFirst({
+            where: {
+                id: BigInt(variantId),
+                product_id: image.product_id,
+            },
+        });
+
+        if (!variant) {
+            const error = new Error("Variant not found or does not belong to this product");
+            error.code = "VARIANT_NOT_FOUND";
+            throw error;
+        }
+    }
+
+    // Actualizamos solo el campo variant_id
+    // Si variantId es null, la imagen queda como del producto general
+    const updated = await prisma.product_images.update({
+        where: { id: BigInt(imageId) },
+        data: {
+            variant_id: variantId ? BigInt(variantId) : null,
+        },
+    });
+
+    // Devolvemos la imagen con formato serializado (BigInt a String)
+    return {
+        id: String(updated.id),
+        product_id: String(updated.product_id),
+        variant_id: updated.variant_id ? String(updated.variant_id) : null,
+        url: updated.url,
+        alt_text: updated.alt_text,
+        sort_order: updated.sort_order,
+        is_primary: updated.is_primary,
+        created_at: updated.created_at,
+    };
+};
+
+export { uploadProductImage, setPrimaryImage, deleteProductImage, reassignImage };

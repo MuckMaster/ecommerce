@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../context/AuthContext'
+import { API_URL } from '../../../config.js'
 import '../Orders/AdminOrders.css'
 import './AdminProducts.css'
 
@@ -44,6 +45,7 @@ function AdminProductForm() {
         throw new Error(data.error || 'Error al cargar el producto')
       }
       const data = await res.json()
+      console.log('Producto completo:', data)
       setProduct(data)
       // Rellenamos el formulario con los datos existentes
       setForm({
@@ -271,7 +273,7 @@ function AdminProductForm() {
       {isEditing && product && (
         <>
           <AdminVariants productId={id} variants={product.product_variants} onRefresh={fetchProduct} />
-          <AdminImages productId={id} images={product.product_images} onRefresh={fetchProduct} />
+          <AdminImages productId={id} images={product.product_images} variants={product.product_variants} onRefresh={fetchProduct} />
         </>
       )}
     </div>
@@ -282,13 +284,27 @@ function AdminProductForm() {
 
 function AdminVariants({ productId, variants, onRefresh }) {
   const { apiFetch } = useAuth()
+
+  // Formulario de creación
   const [form, setForm] = useState({ sku: '', color: '', color_css: '', price: '', stock_qty: 0, is_active: true })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
 
+  // Estado de edición — guarda el id de la variante que se está editando
+  const [editingId, setEditingId] = useState(null)
+  // Formulario de edición (separado del de creación)
+  const [editForm, setEditForm] = useState({ sku: '', color: '', color_css: '', price: '', stock_qty: 0, is_active: true })
+  const [editSaving, setEditSaving] = useState(false)
+  const [editError, setEditError] = useState(null)
+
   function handleChange(e) {
     const { name, value, type, checked } = e.target
     setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
+  }
+
+  function handleEditChange(e) {
+    const { name, value, type, checked } = e.target
+    setEditForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
   }
 
   async function handleCreate(e) {
@@ -311,7 +327,7 @@ function AdminVariants({ productId, variants, onRefresh }) {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Error al crear variante')
       setForm({ sku: '', color: '', color_css: '', price: '', stock_qty: 0, is_active: true })
-      onRefresh() // recargamos el producto para ver la nueva variante
+      onRefresh()
     } catch (err) {
       setError(err.message)
     } finally {
@@ -319,10 +335,59 @@ function AdminVariants({ productId, variants, onRefresh }) {
     }
   }
 
+  // Abre el formulario de edición y lo rellena con los datos de la variante.
+  // Nota: la API devuelve las variantes con name/css, pero el PUT espera color/color_css.
+  function startEdit(v) {
+    setEditingId(v.id)
+    setEditError(null)
+    setEditForm({
+      sku: v.sku || '',
+      color: v.name || '',           // la API devuelve name, el form usa color
+      color_css: v.css || '',        // la API devuelve css, el form usa color_css
+      price: v.price ?? '',          // puede ser null si usa el del producto
+      stock_qty: v.stock_qty ?? 0,
+      is_active: v.is_active,
+    })
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+    setEditError(null)
+  }
+
+  async function handleUpdate(e) {
+    e.preventDefault()
+    setEditSaving(true)
+    setEditError(null)
+    try {
+      const body = {
+        sku: editForm.sku,
+        color: editForm.color,
+        stock_qty: parseInt(editForm.stock_qty),
+        is_active: editForm.is_active,
+        ...(editForm.color_css && { color_css: editForm.color_css }),
+        // Si el precio está vacío mandamos null para que use el del producto
+        price: editForm.price === '' ? null : parseFloat(editForm.price),
+      }
+      const res = await apiFetch(`/api/products/${productId}/variants/${editingId}`, {
+        method: 'PUT',
+        body: JSON.stringify(body)
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Error al editar la variante')
+      setEditingId(null)
+      onRefresh()
+    } catch (err) {
+      setEditError(err.message)
+    } finally {
+      setEditSaving(false)
+    }
+  }
+
   async function handleDeleteVariant(variantId) {
     if (!window.confirm('¿Eliminar esta variante?')) return
     try {
-      const res = await apiFetch(`/api/variants/${variantId}`, { method: 'DELETE' })
+      const res = await apiFetch(`product/${productId}/api/variants/${variantId}`, { method: 'DELETE' })
       if (!res.ok) {
         const data = await res.json()
         throw new Error(data.error || 'Error al eliminar')
@@ -353,30 +418,81 @@ function AdminVariants({ productId, variants, onRefresh }) {
           </thead>
           <tbody>
             {variants.map(v => (
-              <tr key={v.id}>
-                <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{
-                      width: 20, height: 20, borderRadius: '50%',
-                      background: v.css || '#ccc', border: '1px solid var(--sand)'
-                    }} />
-                    {v.name}
-                  </div>
-                </td>
-                <td className="admin-table__mono">{v.sku}</td>
-                <td className="admin-table__mono">{v.css || '—'}</td>
-                <td>{v.price ? `${v.price}€` : 'Del producto'}</td>
-                <td>{v.stock_qty}</td>
-                <td>{v.is_active ? '✓' : '—'}</td>
-                <td>
-                  <button
-                    className="admin-btn admin-btn--sm admin-btn--danger"
-                    onClick={() => handleDeleteVariant(v.id)}
-                  >
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
+              // Fragment para poder renderizar la fila normal + la fila de edición
+              editingId === v.id ? (
+                // ── Fila en modo edición ──
+                <tr key={v.id}>
+                  <td colSpan={7}>
+                    {editError && <div className="admin-error" style={{ marginBottom: 12 }}>{editError}</div>}
+                    <form className="admin-form" onSubmit={handleUpdate}>
+                      <div className="admin-form__row">
+                        <div className="admin-form__field">
+                          <label className="admin-form__label">SKU *</label>
+                          <input className="admin-input" type="text" name="sku" value={editForm.sku} onChange={handleEditChange} required />
+                        </div>
+                        <div className="admin-form__field">
+                          <label className="admin-form__label">Color *</label>
+                          <input className="admin-input" type="text" name="color" value={editForm.color} onChange={handleEditChange} required />
+                        </div>
+                        <div className="admin-form__field">
+                          <label className="admin-form__label">CSS color</label>
+                          <input className="admin-input" type="text" name="color_css" value={editForm.color_css} onChange={handleEditChange} placeholder="#000000" />
+                        </div>
+                      </div>
+                      <div className="admin-form__row">
+                        <div className="admin-form__field">
+                          <label className="admin-form__label">Precio (€, opcional)</label>
+                          <input className="admin-input" type="number" name="price" value={editForm.price} onChange={handleEditChange} step="0.01" min="0" placeholder="Si vacío usa precio del producto" />
+                        </div>
+                        <div className="admin-form__field">
+                          <label className="admin-form__label">Stock</label>
+                          <input className="admin-input" type="number" name="stock_qty" value={editForm.stock_qty} onChange={handleEditChange} min="0" />
+                        </div>
+                        <div className="admin-form__field admin-form__field--checkbox">
+                          <label className="admin-form__label">
+                            <input type="checkbox" name="is_active" checked={editForm.is_active} onChange={handleEditChange} />
+                            Activa
+                          </label>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: 10 }}>
+                        <button type="submit" className="admin-btn admin-btn--primary" disabled={editSaving}>
+                          {editSaving ? 'Guardando...' : 'Guardar'}
+                        </button>
+                        <button type="button" className="admin-btn" onClick={cancelEdit}>
+                          Cancelar
+                        </button>
+                      </div>
+                    </form>
+                  </td>
+                </tr>
+              ) : (
+                // ── Fila normal ──
+                <tr key={v.id}>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{
+                        width: 20, height: 20, borderRadius: '50%',
+                        background: v.css || '#ccc', border: '1px solid var(--sand)'
+                      }} />
+                      {v.name}
+                    </div>
+                  </td>
+                  <td className="admin-table__mono">{v.sku}</td>
+                  <td className="admin-table__mono">{v.css || '—'}</td>
+                  <td>{v.price ? `${v.price}€` : 'Del producto'}</td>
+                  <td>{v.stock_qty}</td>
+                  <td>{v.is_active ? '✓' : '—'}</td>
+                  <td className="admin-table__actions">
+                    <button className="admin-btn admin-btn--sm" onClick={() => startEdit(v)}>
+                      Editar
+                    </button>
+                    <button className="admin-btn admin-btn--sm admin-btn--danger" onClick={() => handleDeleteVariant(v.id)}>
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              )
             ))}
           </tbody>
         </table>
@@ -427,43 +543,44 @@ function AdminVariants({ productId, variants, onRefresh }) {
 
 // ── Componente de imágenes ─────────────────────────────────────────
 
-function AdminImages({ productId, images, onRefresh }) {
+function AdminImages({ productId, images, variants, onRefresh }) {
   const { apiFetch, accessToken } = useAuth()
-  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState(null)
+  // Guarda qué grupo está subiendo imagen ('product' o el id de la variante)
+  const [uploadingTo, setUploadingTo] = useState(null)
 
-  async function handleUpload(e) {
+  // Sube una imagen. variantId puede ser null (producto general) o el id de una variante.
+  async function handleUpload(e, variantId) {
     const file = e.target.files[0]
     if (!file) return
 
-    setUploading(true)
+    setUploadingTo(variantId || 'product')
     setError(null)
 
     try {
-      // Las imágenes se suben como form-data, no JSON
       const formData = new FormData()
       formData.append('image', file)
+      // Si hay variantId lo añadimos al form-data
+      if (variantId) formData.append('variant_id', variantId)
 
-      // apiFetch añade Content-Type: application/json — para form-data
-      // hacemos el fetch directamente sin ese header
-      const res = await fetch(`http://localhost:3000/api/products/${productId}/images`, {
+      const res = await fetch(`${API_URL}/api/products/${productId}/images`, {
         method: 'POST',
-        headers: {
-          // No ponemos Content-Type — el navegador lo añade automáticamente
-          // con el boundary correcto para multipart/form-data
-          'Authorization': `Bearer ${accessToken}`
-        },
+        headers: { 'Authorization': `Bearer ${accessToken}` },
         body: formData
       })
 
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Error al subir imagen')
+      if (!res.ok) {
+        if (res.status === 401) throw new Error('Sesión expirada. Vuelve a iniciar sesión.')
+        if (res.status === 403) throw new Error('No tienes permisos para subir imágenes.')
+        throw new Error(data.error || 'Error al subir imagen')
+      }
       onRefresh()
     } catch (err) {
       setError(err.message)
     } finally {
-      setUploading(false)
-      e.target.value = '' // limpiamos el input para poder subir el mismo archivo otra vez
+      setUploadingTo(null)
+      e.target.value = ''
     }
   }
 
@@ -474,6 +591,7 @@ function AdminImages({ productId, images, onRefresh }) {
       })
       if (!res.ok) {
         const data = await res.json()
+        if (res.status === 403) throw new Error('No tienes permisos para esta acción.')
         throw new Error(data.error || 'Error al marcar como principal')
       }
       onRefresh()
@@ -490,6 +608,7 @@ function AdminImages({ productId, images, onRefresh }) {
       })
       if (!res.ok) {
         const data = await res.json()
+        if (res.status === 403) throw new Error('No tienes permisos para esta acción.')
         throw new Error(data.error || 'Error al eliminar imagen')
       }
       onRefresh()
@@ -498,56 +617,137 @@ function AdminImages({ productId, images, onRefresh }) {
     }
   }
 
+  // Reasigna una imagen a otra variante (o al producto general si variantId es null).
+  // Usa el nuevo endpoint PATCH.
+  async function handleReassign(imageId, variantId) {
+    try {
+      const res = await apiFetch(`/api/products/${productId}/images/${imageId}`, {
+        method: 'PATCH',
+        // variantId puede ser '' (string vacío) que convertimos a null
+        body: JSON.stringify({ variant_id: variantId || null })
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        if (res.status === 403) throw new Error('No tienes permisos para esta acción.')
+        throw new Error(data.error || 'Error al reasignar imagen')
+      }
+      onRefresh()
+    } catch (err) {
+      alert(err.message)
+    }
+  }
+
+  // Imágenes del producto general (sin variante)
+  const productImages = (images || []).filter(img => img.variant_id === null)
+
+  // Renderiza una imagen con sus acciones. Recibe también el variant_id actual
+  // para el selector de reasignación.
+  function renderImage(img) {
+    return (
+      <div key={img.id} className="admin-image-card">
+        <img src={`${API_URL}${img.url}`} alt={img.alt_text || ''} className="admin-image-card__img" />
+        {img.is_primary && (
+          <span className="admin-image-card__badge">Principal</span>
+        )}
+        <div className="admin-image-card__actions">
+          {!img.is_primary && (
+            <button className="admin-btn admin-btn--sm" onClick={() => handleSetPrimary(img.id)}>
+              Principal
+            </button>
+          )}
+          <button className="admin-btn admin-btn--sm admin-btn--danger" onClick={() => handleDeleteImage(img.id)}>
+            Eliminar
+          </button>
+        </div>
+
+        {/* Selector para reasignar la imagen a otra variante o al producto */}
+        {variants && variants.length > 0 && (
+          <select
+            className="admin-input admin-select admin-image-card__reassign"
+            value={img.variant_id || ''}
+            onChange={e => handleReassign(img.id, e.target.value)}
+          >
+            <option value="">Producto general</option>
+            {variants.map(v => (
+              <option key={v.id} value={v.id}>{v.name}</option>
+            ))}
+          </select>
+        )}
+      </div>
+    )
+  }
+
+  // Botón de subida reutilizable. variantId null = producto general.
+  function renderUploadButton(variantId) {
+    const key = variantId || 'product'
+    const isUploading = uploadingTo === key
+    return (
+      <div className="admin-upload" style={{ marginTop: 12 }}>
+        <label className="admin-upload__label">
+          {isUploading ? 'Subiendo...' : '+ Subir imagen'}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={e => handleUpload(e, variantId)}
+            disabled={isUploading}
+            style={{ display: 'none' }}
+          />
+        </label>
+        <p className="admin-upload__hint">Formatos: JPG, PNG, WebP</p>
+      </div>
+    )
+  }
+
   return (
     <div className="admin-card admin-card--full" style={{ marginTop: 16 }}>
       <h2 className="admin-card__title">Imágenes</h2>
 
       {error && <div className="admin-error" style={{ marginBottom: 12 }}>{error}</div>}
 
-      {/* Grid de imágenes existentes */}
-      {images && images.length > 0 && (
-        <div className="admin-images-grid">
-          {images.map(img => (
-            <div key={img.id} className="admin-image-card">
-              <img src={img.url} alt="" className="admin-image-card__img" />
-              {img.is_primary && (
-                <span className="admin-image-card__badge">Principal</span>
-              )}
-              <div className="admin-image-card__actions">
-                {!img.is_primary && (
-                  <button
-                    className="admin-btn admin-btn--sm"
-                    onClick={() => handleSetPrimary(img.id)}
-                  >
-                    Principal
-                  </button>
-                )}
-                <button
-                  className="admin-btn admin-btn--sm admin-btn--danger"
-                  onClick={() => handleDeleteImage(img.id)}
-                >
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Upload de nueva imagen */}
-      <div className="admin-upload">
-        <label className="admin-upload__label">
-          {uploading ? 'Subiendo...' : '+ Subir imagen'}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleUpload}
-            disabled={uploading}
-            style={{ display: 'none' }}
-          />
-        </label>
-        <p className="admin-upload__hint">Formatos: JPG, PNG, WebP</p>
+      {/* ── Grupo: imágenes del producto general ── */}
+      <div style={{ marginBottom: 32 }}>
+        <h3 className="admin-form__subtitle">Imágenes del producto</h3>
+        {productImages.length > 0 ? (
+          <div className="admin-images-grid">
+            {productImages.map(renderImage)}
+          </div>
+        ) : (
+          <p className="admin-empty">No hay imágenes del producto general.</p>
+        )}
+        {renderUploadButton(null)}
       </div>
+
+      {/* ── Un grupo por cada variante ── */}
+      {variants && variants.map(variant => {
+        // Imágenes de esta variante — comparamos ids como strings
+        const variantImages = (images || []).filter(
+          img => String(img.variant_id) === String(variant.id)
+        )
+
+        return (
+          <div key={variant.id} style={{ marginBottom: 32 }}>
+            <h3 className="admin-form__subtitle" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {/* Círculo del color de la variante */}
+              <span style={{
+                display: 'inline-block', width: 16, height: 16, borderRadius: '50%',
+                background: variant.css || '#ccc', border: '1px solid var(--sand)'
+              }} />
+              Imágenes de {variant.name}
+            </h3>
+
+            {variantImages.length > 0 ? (
+              <div className="admin-images-grid">
+                {variantImages.map(renderImage)}
+              </div>
+            ) : (
+              <p className="admin-empty">Esta variante no tiene imágenes.</p>
+            )}
+
+            {renderUploadButton(variant.id)}
+          </div>
+        )
+      })}
+
     </div>
   )
 }

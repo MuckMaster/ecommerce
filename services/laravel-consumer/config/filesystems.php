@@ -24,13 +24,25 @@ return [
         // Razón: En Node.js las imágenes se guardan en uploads/products/ y se sirven
         // en /uploads/products/... Para mantener la misma URL sin que React cambie nada,
         // guardamos directamente en public/uploads/ (accesible vía web sin symlinks)
+
         'uploads' => [
+            'driver'     => 'local',
+            'root'       => env('UPLOADS_ROOT', public_path('uploads')),
+            'url'        => env('APP_URL').'/uploads',
+            'visibility' => 'public',
+            'throw'      => true,
+        ],
+
+        /* 
+            Usar solo en local, para producción usar el de arriba
+        
+            'uploads' => [
             'driver'     => 'local',
             'root'       => public_path('uploads'),
             'url'        => env('APP_URL').'/uploads',
             'visibility' => 'public',
             'throw'      => true,
-        ],
+        ], */
     ],
 
     'links' => [
