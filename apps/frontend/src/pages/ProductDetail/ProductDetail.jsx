@@ -6,6 +6,8 @@ import { useCart } from '../../context/CartContext'
 import { API_URL, imageUrl, formatPrice } from '../../config'
 import './ProductDetail.css'
 
+// Ficha de producto: galería con swatches de color, precio, descripción,
+// añadir al carrito y acordeones de información.
 function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -17,21 +19,28 @@ function ProductDetail() {
 
   // Estados del carrusel y swatches
   const [currentImg, setCurrentImg] = useState(0)
-  const [direction, setDirection] = useState('next')
-  const [animating, setAnimating] = useState(false)
+  const [direction, setDirection] = useState('next')  // sentido de la animación
+  const [animating, setAnimating] = useState(false)   // bloquea clics durante la transición
   const [selectedColor, setSelectedColor] = useState(null)
+  // Título del acordeón que debería estar abierto, o null (ver toggleAccordion).
   const [openAccordion, setOpenAccordion] = useState(null)
 
+  // Coordenadas del inicio del gesto táctil, en refs porque cambian
+  // durante el swipe y no deben provocar re-render.
   const touchStartX = useRef(null)
   const touchStartY = useRef(null)
+  // Referencia al panel de info; los acordeones la usan para ajustar el scroll.
   const infoRef = useRef(null)
 
+  // Recarga con [id] para que al navegar entre productos se pida el nuevo.
   useEffect(() => {
     async function fetchProduct() {
       setLoading(true)
       try {
         const res = await fetch(`${API_URL}/api/products/${id}`)
         if (!res.ok) {
+          // Producto inexistente (o borrado): se devuelve al catálogo
+          // en lugar de mostrar un error a un cliente.
           if (res.status === 404) {
             navigate('/catalogo')
             return
@@ -70,6 +79,10 @@ function ProductDetail() {
   const activeImages = (variantImages.length > 0 ? variantImages : generalImages)
     .sort((a, b) => a.sort_order - b.sort_order) // ordenamos por sort_order
 
+  // Cambia de imagen. El flag `animating` descarta las pulsaciones que llegan
+  // mientras hay una transición en curso, y el setTimeout deja que React
+  // aplique primero la nueva dirección antes de cambiar el índice
+  // (si no, la animación saldría hacia el lado contrario).
   function changeImg(newIndex, dir) {
     if (animating) return
     setDirection(dir)
@@ -80,6 +93,8 @@ function ProductDetail() {
     }, 10)
   }
 
+  // El módulo hace la galería circular: de la última se pasa a la primera.
+  // En prevImg se suma length antes del % para no obtener un índice negativo.
   const prevImg = () => changeImg(
     (currentImg - 1 + activeImages.length) % activeImages.length, 'prev'
   )
@@ -92,6 +107,9 @@ function ProductDetail() {
     touchStartY.current = e.touches[0].clientY
   }
 
+  // Swipe en móvil. Solo se considera swipe si el movimiento horizontal supera
+  // al vertical (así no se cambia de foto mientras se hace scroll) y si recorre
+  // más de 50px, para descartar toques accidentales.
   function handleTouchEnd(e) {
     if (touchStartX.current === null) return
     const diffX = touchStartX.current - e.changedTouches[0].clientX
@@ -104,12 +122,17 @@ function ProductDetail() {
     touchStartY.current = null
   }
 
+  // Al cambiar de color se vuelve a la primera imagen: el nuevo juego de fotos
+  // puede tener menos elementos y el índice actual quedaría fuera de rango.
   function handleSwatchClick(variant) {
     setSelectedColor(variant)
     setCurrentImg(0)
     setDirection('next')
   }
 
+  // Lleva la cuenta de qué acordeón debería estar abierto (uno a la vez).
+  // OJO: el componente Accordion actual no lee las props isOpen/onToggle,
+  // gestiona su apertura por su cuenta, así que este estado hoy no le afecta.
   function toggleAccordion(title) {
     setOpenAccordion(prev => prev === title ? null : title)
   }
@@ -144,6 +167,7 @@ function ProductDetail() {
               />
             </AnimatePresence>
 
+            {/* Con una sola imagen no se muestran las flechas */}
             {activeImages.length > 1 && (
               <>
                 <button className="detail__gallery-btn detail__gallery-btn--prev" onClick={prevImg} aria-label="Foto anterior">&#8592;</button>

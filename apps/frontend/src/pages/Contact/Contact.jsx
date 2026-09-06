@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import './Contact.css'
 import { API_URL } from '../../config.js'   // ajusta los ../ según la profundidad de cada archivo
 
+// Formulario de contacto. Envía el mensaje al backend, que es quien
+// se encarga de hacerlo llegar por correo.
 function Contact() {
     const navigate = useNavigate()
 
@@ -13,6 +15,8 @@ function Contact() {
         message: ''
     })
 
+    // null | 'loading' | 'success' | 'error' — controla el mensaje de aviso
+    // y el texto del botón de envío.
     const [status, setStatus] = useState(null)
 
     function handleChange(e) {
@@ -35,6 +39,8 @@ function Contact() {
                 body: JSON.stringify({
                     name: form.name,
                     email:form.email,
+                    // undefined se omite al serializar a JSON: si el teléfono
+                    // está vacío, el campo no llega al backend en vez de ir como ''.
                     phone: form.phone || undefined,
                     message: form.message
                 })
@@ -43,6 +49,8 @@ function Contact() {
                 throw new Error('Error en el servidor')
             }
 
+            // Se vacía el formulario solo si el envío ha ido bien: si falla,
+            // el usuario conserva lo escrito para poder reintentarlo.
             setStatus('success')
             setForm({name: '', email: '', phone: '', message:''})
         } catch (err) {

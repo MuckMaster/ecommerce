@@ -20,8 +20,13 @@ import AdminCategories from './pages/Admin/Categories/AdminCategories'
 import AdminOrders from './pages/Admin/Orders/AdminOrders'
 import AdminOrderDetail from './pages/Admin/Orders/AdminOrderDetail'
 
+// Componente raíz: navbar y footer fijos en todas las páginas,
+// y en medio el enrutado. Las rutas /admin/* van envueltas en
+// RequireAdmin (control de acceso) + AdminLayout (chrome del panel).
 function App() {
 
+    // El modal de acceso vive aquí y no en la Navbar porque se abre desde
+    // la propia navbar pero se monta por encima de toda la aplicación.
     const [authOpen, setAuthOpen] = useState(false)
 
     return (

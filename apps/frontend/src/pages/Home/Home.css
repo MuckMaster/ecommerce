@@ -2,6 +2,8 @@
     width: 100%;
 }
 
+/* ── Sección de destacados ─────────────────────────────────────────
+   Envuelve el hero y la rejilla de productos de la portada. */
 .home__featured {
     padding-top: 4px ;
     padding-bottom: 20px;
@@ -18,6 +20,9 @@
     letter-spacing: 0.04em;
 }
 
+/* Rejilla de destacados. Aquí se usa flex-wrap y no grid (a diferencia del
+   catálogo) porque el número de destacados es variable: con flex la última
+   fila se completa sola en vez de dejar huecos de columna vacíos. */
 .home__featured-grid {
   display: flex;
   flex-wrap: wrap;
@@ -47,6 +52,10 @@
     object-fit: cover;       /* si le damos altura fija, recorta sin deformar */
 }
 
+/* NOTA: estas media queries fijan grid-template-columns, que no tiene efecto
+   sobre un contenedor flex. En la práctica el número de tarjetas por fila en
+   tablet y móvil lo decide el min-width: 250px de la regla de arriba.
+   Se dejan como están para no alterar el diseño actual. */
 @media (max-width: 1024px) {
     .home__featured-grid {
         grid-template-columns: repeat(2,1fr);

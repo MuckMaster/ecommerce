@@ -4,6 +4,9 @@
 }
     */
 
+/* ── Cabecera del catálogo ─────────────────────────────────────────
+   Título a la izquierda y contador a la derecha. align-items: baseline
+   alinea ambos por la línea del texto pese a sus tamaños distintos. */
 .catalogue__header {
     display: flex;
     align-items: baseline;
@@ -25,19 +28,35 @@
     color: var(--muted);
 }
 
+/* ── Rejilla de productos ──────────────────────────────────────────
+   Flexbox en lugar de grid fijo: las tarjetas se adaptan al número de
+   productos y, cuando la última fila queda incompleta, se centra en
+   vez de dejar huecos a la derecha (justify-content: center).
+   flex: 0 1 calc(25% ...) = 4 por fila sin estirarse; la altura la
+   marca el aspect-ratio 3:4 de la imagen en ProductCard.css. */
 .catalogue__grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
     padding: 20px 20px;
 }
 
+.catalogue__grid > * {
+    flex: 0 1 calc(25% - 8px);
+    min-width: 250px;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────
+   De 4 columnas a 2 en tablet y móvil, quitando el padding lateral
+   para aprovechar todo el ancho de pantalla. */
 @media (max-width: 1024px) {
     .catalogue__grid {
-        grid-template-columns: repeat(2, 1fr);
         padding: 0px;
     }
-
+    .catalogue__grid > * {
+        flex: 0 1 calc(50% - 10px);   /* 2 por fila en tablet */
+    }
     .catalogue__header {
         padding: 20px 24px;
     }
@@ -45,15 +64,16 @@
 
 @media (max-width: 640px) {
     .catalogue__grid {
-        grid-template-columns: repeat(2 ,1fr);
         padding: 0px;
     }
-
+    .catalogue__grid > * {
+        flex: 0 1 calc(50% - 10px);   /* 2 por fila en móvil */
+        min-width: 0;                  /* anula el min-width de 250px para que quepan 2 */
+    }
     .catalogue__header {
         padding: 20px 12px;
     }
-
-    .catalogue__title{
+    .catalogue__title {
         font-size: 1.6rem;
     }
 }

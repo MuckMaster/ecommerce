@@ -1,3 +1,7 @@
+/* ── Fondo del modal ───────────────────────────────────────────────
+   inset:0 lo estira a toda la ventana (equivale a top/right/bottom/left
+   a 0). Es además el contenedor flex que centra la caja en pantalla,
+   y el z-index lo deja por encima de la navbar (z-index 100). */
 .auth-modal__overlay {
   position: fixed;
   inset: 0;
@@ -11,6 +15,9 @@
 }
 
 
+/* Caja del formulario. width:100% + max-width la hace fluida en móvil
+   y de ancho fijo en escritorio. position:relative es la referencia
+   del botón de cerrar, que va absoluto en su esquina. */
 .auth-modal__box {
   position: relative;
   width: 100%;
@@ -64,6 +71,9 @@
   color: var(--muted);
 }
 
+/* Igual que en el checkout: se anula el aspecto nativo de los inputs
+   (appearance y border-radius) para unificarlo entre navegadores.
+   outline:none se compensa con el cambio de color del borde en :focus. */
 .auth-modal__input {
   width: 100%;
   padding: 13px 15px;
@@ -130,6 +140,8 @@
   color: var(--muted);
 }
 
+/* Aviso de error. Los colores van en literal y no en variables porque
+   son de estado (rojo), ajenos a la paleta de marca del :root. */
 .auth-modal__error {
     color: #7a3d3d;
     border-left: 3px solid #c47a7a;

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../../../context/AuthContext'
 import './AdminDashboard.css'
 
+// Pantalla de inicio del panel: cifras de pedidos e ingresos.
+// Todos los cálculos vienen ya hechos del endpoint de stats.
 function AdminDashboard() {
   const { apiFetch } = useAuth()
   const [stats, setStats] = useState(null)
@@ -27,6 +29,9 @@ function AdminDashboard() {
     fetchStats()
   }, [])
 
+  // Estas dos salidas tempranas son obligatorias: el render de abajo accede
+  // a stats.orders / stats.revenue sin comprobar nulos y reventaría
+  // si se pintara antes de que llegue la respuesta.
   if (loading) return <div className="admin-loading">Cargando...</div>
   if (error) return <div className="admin-error">{error}</div>
 

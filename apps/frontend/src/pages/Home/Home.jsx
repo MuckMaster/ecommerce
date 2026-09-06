@@ -3,9 +3,12 @@ import ProductCard from '../../components/ProductCard/ProductCard'
 import { API_URL } from '../../config'
 import './Home.css'
 
+// Portada: imagen principal y rejilla de productos destacados.
 function Home() {
   const [featured, setFeatured] = useState([])
 
+  // Se pide el catálogo entero y el filtrado de destacados se hace aquí,
+  // porque la API no tiene un endpoint específico de destacados.
   useEffect(() => {
     async function fetchFeatured() {
       try {
@@ -13,6 +16,8 @@ function Home() {
         if (!res.ok) return
         const data = await res.json()
         const destacados = data.filter(p => p.is_featured)
+        // Si todavía no hay ningún producto marcado como destacado se muestran
+        // todos, para que la portada nunca aparezca vacía.
         setFeatured(destacados.length > 0 ? destacados : data)
       } catch (err) {
         console.error('Error al cargar destacados:', err)

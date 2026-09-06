@@ -1,9 +1,13 @@
+/* ── Página del carrito ────────────────────────────────────────────
+   El min-height descuenta la altura de la navbar (57px) para que el
+   fondo llegue siempre abajo aunque haya pocos artículos. */
 .cart {
   min-height: calc(100vh - 57px);
   background: var(--cream);
   padding: 60px 48px;
 }
 
+/* Columna centrada y estrecha: es una lista, no necesita todo el ancho. */
 .cart__wrap {
   max-width: 700px;
   margin: 0 auto;
@@ -88,6 +92,9 @@
   gap: 2px;
 }
 
+/* ── Línea de artículo ─────────────────────────────────────────────
+   Fila con info, controles de cantidad, total y botón de eliminar.
+   El gap de 2px entre líneas deja ver el fondo crema como separador. */
 .cart__item {
   display: flex;
   align-items: center;
@@ -96,6 +103,8 @@
   padding: 18px 20px;
 }
 
+/* flex:1 hace que el nombre absorba el espacio sobrante y empuje
+   los controles y el precio hacia la derecha. */
 .cart__item-info {
   flex: 1;
   display: flex;
@@ -143,6 +152,8 @@
   text-align: center;
 }
 
+/* min-width fijo + alineación a la derecha: los importes quedan en
+   columna aunque tengan distinto número de dígitos. */
 .cart__item-total {
   font-family: var(--font-display);
   font-size: 1rem;
@@ -166,6 +177,8 @@
   color: var(--dark);
 }
 
+/* ── Resumen y acciones ────────────────────────────────────────────
+   Total, botón de finalizar pedido y enlace de vaciar carrito. */
 .cart__summary {
   display: flex;
   flex-direction: column;
@@ -237,6 +250,8 @@
     font-size: 1.8rem;
   }
 
+  /* En móvil no cabe todo en una línea: flex-wrap deja que los controles
+     de cantidad bajen a una segunda fila en vez de comprimirse. */
   .cart__item {
     flex-wrap: wrap;
     gap: 12px;

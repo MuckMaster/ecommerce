@@ -4,6 +4,8 @@ import { useAuth } from '../../../context/AuthContext'
 import '../Orders/AdminOrders.css'
 import './AdminProducts.css'
 
+// Listado de productos del panel, con acceso a crear, editar y eliminar.
+// El alta y la edición viven en AdminProductForm.
 function AdminProducts() {
   const navigate = useNavigate()
   const { apiFetch } = useAuth()
@@ -94,6 +96,8 @@ function AdminProducts() {
                     <td className="admin-table__mono">{product.slug}</td>
                     <td>{product.price}€</td>
                     <td>
+                      {/* El estado llega en mayúsculas (PUBLISHED / DRAFT) y se
+                          pasa a minúsculas para componer el modificador CSS */}
                       <span className={`admin-product-status admin-product-status--${product.status.toLowerCase()}`}>
                         {product.status === 'PUBLISHED' ? 'Publicado' : 'Borrador'}
                       </span>

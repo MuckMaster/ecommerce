@@ -1,3 +1,6 @@
+/* ── Pie de página ─────────────────────────────────────────────────
+   Marca, enlaces y copyright repartidos en una fila. flex-wrap deja que
+   los bloques bajen de línea en anchos intermedios sin que se aplasten. */
 .footer {
   display: flex;
   align-items: center;
@@ -40,6 +43,7 @@
   color: var(--stone);
 }
 
+/* En móvil los tres bloques se apilan alineados a la izquierda. */
 @media (max-width: 640px) {
   .footer {
     flex-direction: column;

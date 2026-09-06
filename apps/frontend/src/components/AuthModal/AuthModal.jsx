@@ -2,10 +2,16 @@ import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import './AuthModal.css'
 
+// Modal único de acceso: alterna entre iniciar sesión y registrarse
+// sin cambiar de ruta. Su apertura la controla App a través de isOpen.
 function AuthModal({ isOpen, onClose }) {
 
+    // 'login' | 'register' — determina qué campos se muestran
+    // y a qué función del contexto se llama al enviar.
     const [mode, setMode] = useState('login')
 
+    // Un único estado para los tres campos; handleChange los distingue
+    // por el atributo name del input.
     const [form, setForm] = useState({ name: '', email: '', password: '' })
 
     const [error, setError] = useState(null)
@@ -19,9 +25,10 @@ function AuthModal({ isOpen, onClose }) {
         setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
     }
 
+    // Envía el formulario según el modo activo. El modal solo se cierra
+    // si la promesa no lanza; si falla, el error se muestra dentro.
     async function handleSubmit(e) {
         e.preventDefault()
-        console.log('Form data:', form)
         setError(null)
         setLoading(true)
 
@@ -39,12 +46,16 @@ function AuthModal({ isOpen, onClose }) {
         }
     }
 
+    // Cambia entre login y registro limpiando el formulario y el error,
+    // para no arrastrar datos ni mensajes del modo anterior.
     function handleSwitch() {
         setMode(prev => prev === 'login' ? 'register' : 'login')
         setForm({ name: '', email: '', password: '' })
         setError(null)
     }
 
+    // Cierra al pulsar fuera de la caja. La comparación target/currentTarget
+    // evita que un clic dentro del modal lo cierre por burbujeo.
     function handleOverlayClick(e) {
         if (e.target === e.currentTarget) onClose()
     }
@@ -71,6 +82,7 @@ function AuthModal({ isOpen, onClose }) {
                 )}
 
                 <div className="auth-modal__form">
+                    {/* El campo Nombre solo existe en el registro */}
                     {mode === 'register' && (
                         <div className="auth-modal__field">
                             <label className="auth-modal__label" htmlFor="name">Nombre</label>

@@ -3,10 +3,14 @@ import { useEffect } from 'react'
 import { useCart } from '../../context/CartContext'
 import './OrderConfirmed.css'
 
+// Pantalla de vuelta desde Stripe tras un pago correcto.
 function OrderConfirmed() {
   const navigate = useNavigate()
   const { fetchCart } = useCart()
 
+  // El carrito lo vacía el backend al confirmar el pedido, así que al volver
+  // hay que recargarlo para que el contador de la navbar no siga marcando
+  // los artículos ya comprados.
   useEffect(() => {
     fetchCart()
   }, [])

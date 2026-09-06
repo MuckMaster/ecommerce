@@ -2,11 +2,18 @@
     min-height: calc(100vh -57px);
 }
 
+/* ── Estructura de la ficha ────────────────────────────────────────
+   Dos columnas a la altura exacta de la ventana menos la navbar (57px):
+   la galería no hace scroll y la columna de info se desplaza por dentro. */
 .detail__wrap {
     display: flex;
     height: calc(100vh - 57px);
 }
 
+/* ── Galería ───────────────────────────────────────────────────────
+   El ancho se calcula a partir de la altura disponible para dar a la foto
+   una proporción 3:4 fija (el mismo formato vertical que las tarjetas del
+   catálogo). flex-shrink:0 impide que la columna de info la comprima. */
 .detail__gallery {
     position: relative;
     background: var(--sand);
@@ -22,6 +29,8 @@
     height: 100%;
 }
 
+/* cover llena el marco recortando lo que sobre, en vez de deformar
+   la foto o dejar franjas vacías cuando no es exactamente 3:4. */
 .detail__img {
     width: 100%;
     height: 100%;
@@ -29,6 +38,8 @@
     display: block;
 }
 
+/* Flechas centradas verticalmente sobre la foto: top:50% baja el borde
+   superior al centro y translateY(-50%) sube el botón media altura suya. */
 .detail__gallery-btn {
     position: absolute;
     top: 50%;
@@ -54,6 +65,8 @@
 .detail__gallery-btn--prev { left: 12px; }
 .detail__gallery-btn--next { right: 12px; }
 
+/* Puntos indicadores centrados en horizontal con el mismo truco
+   left:50% + translateX(-50%), que no depende de cuántos puntos haya. */
 .detail__gallery-dots {
   position: absolute;
   bottom: 16px;
@@ -78,6 +91,11 @@
   transform: scale(1.4);
 }
 
+/* ── Columna de información ────────────────────────────────────────
+   Ocupa el ancho restante (flex:1) y hace su propio scroll interno para
+   que la galería quede fija al desplazar el texto. Las dos reglas de
+   scrollbar ocultan la barra por estética: una para Firefox
+   (scrollbar-width) y otra para navegadores WebKit. */
 .detail__info {
     flex: 1;
     height: 100%;
@@ -154,6 +172,9 @@
     margin-bottom: 32px;
 }
 
+/* Muestras de color: el color de fondo lo pone el JSX desde variant.css.
+   El borde nace transparente pero ya ocupa sus 2px, de modo que al marcar
+   la variante activa el círculo no cambia de tamaño ni desplaza a los demás. */
 .detail__swatch {
     width: 32px;
     height: 32px;
@@ -218,6 +239,11 @@
   text-decoration: underline var(--dark);
 }
 
+/* ── Responsive ────────────────────────────────────────────────────
+   Las dos columnas pasan a apilarse: .detail__wrap deja de ser flex de
+   altura fija y la galería recupera su proporción con aspect-ratio 3/4,
+   ya que sin altura de referencia el cálculo en vh deja de servir.
+   La info deja también su scroll propio y scrollea con la página. */
 @media (max-width: 1024px) {
     .detail__wrap {
         grid-template-columns: 1fr;
@@ -260,6 +286,8 @@
     .detail__price {
         font-size: 1.4rem;
     }
+    /* En móvil las flechas sobran: la galería se maneja con swipe
+       (handleTouchStart / handleTouchEnd) y con los puntos. */
     .detail__gallery-btn {
         display: none;
     }

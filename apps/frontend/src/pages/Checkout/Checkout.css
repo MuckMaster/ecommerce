@@ -38,6 +38,10 @@
   letter-spacing: 0.03em;
 }
 
+/* ── Distribución en dos columnas ──────────────────────────────────
+   Formulario flexible a la izquierda y resumen de ancho fijo (380px)
+   a la derecha. align-items:start evita que la columna corta se estire
+   a la altura de la larga, para que el resumen pueda quedarse pegado. */
 .checkout__layout {
   display: grid;
   grid-template-columns: 1fr 380px;
@@ -90,6 +94,10 @@
   letter-spacing: 0;
 }
 
+/* ── Campos del formulario ─────────────────────────────────────────
+   appearance:none y border-radius:0 anulan el estilo nativo que iOS y
+   Safari aplican a inputs y selects, para que se vean igual en todos
+   los navegadores. */
 .checkout__input {
   width: 100%;
   padding: 13px 15px;
@@ -110,6 +118,9 @@
   border-color: var(--stone);
 }
 
+/* Como appearance:none también quita la flecha del desplegable, se repone
+   con una flecha SVG embebida en el propio CSS (data URI: no hace falta un
+   archivo aparte ni una petición extra). El padding-right reserva su hueco. */
 .checkout__select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6259' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -132,7 +143,9 @@
   color: #7a3d3d;
 }
 
-/* Resumen */
+/* ── Resumen del pedido ────────────────────────────────────────────
+   sticky con top:80px (por debajo de la navbar) para que el total y el
+   botón de pagar sigan visibles mientras se rellena el formulario. */
 .checkout__summary {
   background: var(--white);
   padding: 28px 24px;
@@ -242,6 +255,10 @@
   background: var(--muted);
 }
 
+/* ── Responsive ────────────────────────────────────────────────────
+   Al apilarse en una columna el sticky pierde sentido (position:static),
+   y order:-1 sube el resumen por encima del formulario para que se vea
+   qué se está comprando antes de ponerse a rellenar campos. */
 @media (max-width: 1024px) {
   .checkout__layout {
     grid-template-columns: 1fr;

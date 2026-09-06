@@ -4,26 +4,27 @@ import { useAuth } from '../../context/AuthContext'
 import './Account.css'
 import { API_URL } from '../../config.js'   // ajusta los ../ según la profundidad de cada archivo
 
+// Área privada del cliente: sus datos personales y su historial de pedidos.
 function Account() {
   const navigate = useNavigate()
   const { user, accessToken, logout, apiFetch, ready } = useAuth()
   const [orders, setOrders] = useState([])
   const [loadingOrders, setLoadingOrders] = useState(false)
 
+  // Carga de pedidos. Se espera a `ready` porque hasta que no termina la
+  // restauración de sesión el accessToken todavía es null y la petición
+  // se iría sin autorización.
   useEffect(() => {
     if(!user || !ready) return
     async function fetchOrders() {
       setLoadingOrders(true)
       try {
-        console.log('accesToken', accessToken)
         const res = await fetch(`${API_URL}/api/orders`, {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         })
-        console.log('Status', res.status)
         const data = await res.json()
-        console.log('Datos:', data)
-        console.log('Es array:', Array.isArray(data))
-        console.log('Length:', data.length)
+        // El endpoint puede responder un array plano o un objeto { orders: [...] };
+        // se normalizan ambos casos para que el render siempre reciba un array.
         setOrders(Array.isArray(data) ? data : data.orders || [])
       } catch (err) {
           console.error('Error al cargar pedidos:', err)
@@ -34,10 +35,12 @@ function Account() {
   fetchOrders()
   }, [user, ready])
 
+  // Protege la ruta: si no hay usuario (o acaba de cerrar sesión) se sale al home.
   useEffect(() => {
     if (!user) navigate('/')
   }, [user])
 
+  // Evita pintar la pantalla durante el render previo a la redirección.
   if (!user) return null
 
   function handleLogout() {
@@ -79,6 +82,9 @@ function Account() {
             <p className="accoiunt__loading">Cargando pedidos...</p>
           )}
 
+          {/* Los tres bloques siguientes son excluyentes: cargando,
+              sin pedidos, o listado. Todos comprueban !loadingOrders
+              para no mostrar el "no tienes pedidos" mientras se cargan. */}
           {!loadingOrders && orders.length === 0 && (
             <div className="account__empty">
                 <p>No tienes pedidos todavía.</p>

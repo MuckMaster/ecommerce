@@ -1,5 +1,7 @@
 import './Footer.css'
 
+// Pie de página fijo en todas las rutas. Los enlaces legales todavía son
+// texto sin navegación: aún no existen esas páginas.
 function Footer() {
   return (
     <footer className="footer">

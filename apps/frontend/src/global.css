@@ -1,11 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500&display=swap');
 
+/* ── Reset global ──────────────────────────────────────────────────
+   border-box en todo para que paddings y bordes no sumen al ancho
+   declarado, que es lo que asumen las rejillas del catálogo. */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+/* ── Variables de tema ─────────────────────────────────────────────
+   Paleta y tipografías de la marca. Cualquier cambio de color se hace
+   aquí, no en las hojas de cada componente. */
 :root {
     --navbar: #f5f5dc; /* color de la navbar */
     --cream: #F5EFE8;      /* fondo principal */
@@ -21,11 +27,16 @@
     --transtion: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Base de 16px: el resto de tamaños van en rem sobre esta referencia.
+   scroll-behavior suaviza los saltos de ancla y el scroll programático. */
 html {
     font-size: 16px;
     scroll-behavior: smooth;
 }
 
+/* ── Base del documento ────────────────────────────────────────────
+   OJO: hay dos declaraciones de background. La de arriba lleva !important
+   y es la que se aplica (blanco); la de var(--cream) queda anulada. */
 body {
     background: #FFFFFF !important;
     font-family: var(--font-body);
@@ -42,11 +53,15 @@ button {
     color: #1A1714;
 }
 
+/* display:block quita el hueco que el navegador deja bajo las imágenes
+   por tratarlas como texto en línea; max-width evita desbordes en móvil. */
 img {
     display: block;
     max-width: 100%;
 }
 
+/* Refuerzo del menú móvil abierto: se deja aquí, fuera de Navbar.css,
+   para que gane a las reglas de posicionamiento de ese archivo. */
 .navbar___links--open {
     position: fixed !important;
     z-index: 9999 !important;

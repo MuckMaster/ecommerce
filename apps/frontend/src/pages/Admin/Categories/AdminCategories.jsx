@@ -3,6 +3,8 @@ import { useAuth } from '../../../context/AuthContext'
 import '../Orders/AdminOrders.css'
 import './AdminCategories.css'
 
+// Gestión de categorías en una sola pantalla: el formulario de la izquierda
+// hace de alta y de edición, y el listado de la derecha alimenta ese formulario.
 function AdminCategories() {
   const { apiFetch } = useAuth()
 
@@ -156,6 +158,8 @@ function AdminCategories() {
       }
       // Si estábamos editando esta categoría, cancelamos la edición
       if (editing?.id === id) handleCancelEdit()
+      // Se quita del estado local en vez de recargar la lista entera:
+      // el borrado ya ha sido confirmado por el backend.
       setCategories(prev => prev.filter(c => c.id !== id))
     } catch (err) {
       alert(err.message)
@@ -281,7 +285,9 @@ function AdminCategories() {
             <div className="admin-empty">No hay categorías todavía.</div>
           ) : (
             <div className="admin-categories__items">
-              {/* Ordenamos por sort_order antes de mostrar */}
+              {/* Ordenamos por sort_order antes de mostrar.
+                  Se copia el array con [...] porque sort() muta el original
+                  y no se debe modificar el estado directamente. */}
               {[...categories]
                 .sort((a, b) => a.sort_order - b.sort_order)
                 .map(category => (

@@ -2,6 +2,8 @@
     border-bottom: 1px solid var(--stone);
 }
 
+/* Cabecera pulsable: title a la izquierda e icono a la derecha,
+   separados por space-between al 100% de ancho. */
 .accordion__trigger {
     width: 100%;
     display: flex;
@@ -35,10 +37,17 @@
     line-height: 1;
 }
 
+/* El icono es un "+" que al girar 45º se convierte en "×" al abrir. */
 .accordion__icon--open {
     transform: rotate(45deg);
 }
 
+/* ── Cuerpo plegable ───────────────────────────────────────────────
+   Se anima con max-height y no con height porque la altura real del
+   contenido es auto y auto no se puede transicionar. overflow:hidden
+   es lo que recorta el contenido mientras está cerrado.
+   OJO: los 300px son el tope de la animación — un contenido más alto
+   que eso quedaría cortado; súbelo si hace falta. */
 .accordion__body {
     max-height: 0;
     overflow: hidden;

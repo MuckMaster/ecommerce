@@ -5,6 +5,8 @@
   margin-bottom: 32px;
 }
 
+/* Selector de categorías: los checkboxes fluyen en varias líneas
+   (flex-wrap) porque su número y la longitud de los nombres varían. */
 .admin-form__checkbox-group {
   display: flex;
   flex-wrap: wrap;
@@ -33,7 +35,8 @@
   border-color: #c47a7a;
 }
 
-/* Badge de estado del producto */
+/* Badge de estado del producto. Los sufijos --published y --draft
+   los compone el JSX pasando product.status a minúsculas. */
 .admin-product-status {
   font-size: 0.7rem;
   letter-spacing: 0.08em;
@@ -64,6 +67,8 @@
   gap: 7px;
 }
 
+/* Alinea el checkbox con la base de los inputs de su misma fila:
+   sin label encima quedaría flotando arriba dentro de la celda. */
 .admin-form__field--checkbox {
   justify-content: flex-end;
 }
@@ -83,7 +88,9 @@
   margin-bottom: 16px;
 }
 
-/* Grid de imágenes */
+/* ── Rejilla de imágenes ───────────────────────────────────────────
+   4 por fila; position:relative en la tarjeta para poder colocar encima
+   el badge de "Principal", que va absoluto. */
 .admin-images-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -96,6 +103,8 @@
   background: var(--sand);
 }
 
+/* Se previsualizan en el mismo 3:4 con que se verán en la tienda,
+   así el administrador comprueba cómo va a quedar el recorte. */
 .admin-image-card__img {
   width: 100%;
   aspect-ratio: 3 / 4;
@@ -122,7 +131,10 @@
   background: var(--cream);
 }
 
-/* Upload */
+/* ── Subida de imágenes ────────────────────────────────────────────
+   El <input type="file"> real va oculto en el JSX y este label hace de
+   botón (al pulsarlo se activa el input asociado). El borde discontinuo
+   es la convención visual de "zona para soltar/añadir archivos". */
 .admin-upload__label {
   display: inline-block;
   padding: 10px 20px;
@@ -155,6 +167,8 @@
   margin-top: 4px;
 }
 
+/* Responsive: los pares de campos pasan a uno por línea y la rejilla
+   de imágenes baja de 4 a 2 columnas. */
 @media (max-width: 768px) {
   .admin-form__row {
     grid-template-columns: 1fr;

@@ -4,6 +4,9 @@ import ProductCard from '../../components/ProductCard/ProductCard'
 import { API_URL } from '../../config'
 import './Catalogue.css'
 
+// Listado de productos. Sirve tanto para el catálogo completo como para
+// el filtrado por categoría: lo decide el parámetro ?cat= de la URL,
+// de modo que cada filtro es una URL compartible y navegable con el historial.
 function Catalogue() {
   const [searchParams] = useSearchParams()
   const catSlug = searchParams.get('cat') // slug de categoría o null
@@ -43,6 +46,7 @@ function Catalogue() {
         <span className="catalogue__count">{products.length} productos</span>
       </div>
 
+      {/* Tres estados excluyentes: cargando, error o rejilla de productos */}
       {loading ? (
         <p className="catalogue__loading">Cargando productos...</p>
       ) : error ? (

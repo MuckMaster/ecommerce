@@ -1,4 +1,10 @@
-/* Estilos compartidos por todo el panel admin */
+/* Estilos compartidos por todo el panel admin: inputs, botones, tablas
+   y cards. Aunque viva en la carpeta Orders, esta hoja la importan también
+   las pantallas de productos y categorías, que reutilizan estas clases.
+
+   ── Barra de filtros ──
+   flex-wrap deja que los filtros bajen de línea en pantallas medias
+   en lugar de comprimirse. */
 .admin-filters {
   display: flex;
   gap: 10px;
@@ -23,6 +29,9 @@
   border-color: var(--stone);
 }
 
+/* appearance:none (en .admin-input) quita también la flecha del select,
+   así que se repone con un SVG embebido como data URI, sin archivo aparte.
+   El padding-right le reserva el hueco para que no pise al texto. */
 .admin-select {
   cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6259' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
@@ -93,11 +102,15 @@
   color: var(--dark);
 }
 
-/* Tabla */
+/* ── Tabla ─────────────────────────────────────────────────────────
+   El wrapper con overflow-x hace que sea la tabla la que se desplace
+   en horizontal cuando no cabe, en vez de la página entera. */
 .admin-table-wrap {
   overflow-x: auto;
 }
 
+/* border-collapse: collapse funde los bordes de celdas contiguas en una
+   sola línea; sin él se verían dobles entre fila y fila. */
 .admin-table {
   width: 100%;
   border-collapse: collapse;
@@ -125,12 +138,16 @@
   background: #fafaf8;
 }
 
+/* Fila de "sin resultados". El !important es necesario para ganar
+   al padding de .admin-table td, de igual especificidad pero anterior. */
 .admin-table__empty {
   text-align: center;
   color: var(--muted);
   padding: 40px !important;
 }
 
+/* Monoespaciada para los datos de longitud fija (nº de pedido, SKU, slug):
+   así quedan alineados en columna de una fila a otra. */
 .admin-table__mono {
   font-family: monospace;
   font-size: 0.8rem;
@@ -158,7 +175,9 @@
   color: var(--muted);
 }
 
-/* Detalle de pedido */
+/* ── Detalle de pedido ─────────────────────────────────────────────
+   Rejilla de dos columnas de cards; .admin-card--full ocupa la fila
+   entera con grid-column: 1 / -1 (de la primera línea a la última). */
 .admin-order-detail__header {
   display: flex;
   align-items: baseline;
@@ -232,7 +251,8 @@
   margin-bottom: 12px;
 }
 
-/* Totales */
+/* Totales alineados a la derecha bajo la tabla (align-items: flex-end),
+   como en una factura. */
 .admin-order-detail__totals {
   display: flex;
   flex-direction: column;
@@ -257,7 +277,10 @@
   font-weight: 300;
 }
 
-/* Historial */
+/* ── Historial de estados ──────────────────────────────────────────
+   Lista tipo línea de tiempo: un punto por entrada y una línea inferior
+   como separador. El margin-top del punto lo baja hasta alinearlo con
+   la primera línea de texto, no con el borde de la caja. */
 .admin-history {
   display: flex;
   flex-direction: column;
@@ -308,7 +331,8 @@
   font-size: 0.9em;
 }
 
-/* Responsive */
+/* Responsive: las cards del detalle pasan a una columna y los filtros
+   se apilan en vertical. */
 @media (max-width: 768px) {
   .admin-order-detail__grid {
     grid-template-columns: 1fr;

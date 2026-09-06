@@ -1,3 +1,6 @@
+/* ── Página de contacto ────────────────────────────────────────────
+   Formulario centrado en vertical y horizontal dentro del alto de la
+   ventana menos la navbar (57px). */
 .contact {
   min-height: calc(100vh - 57px);
   background: var(--cream);
@@ -46,6 +49,9 @@
   margin-bottom: 40px;
 }
 
+/* ── Avisos de envío ───────────────────────────────────────────────
+   Base común y dos variantes (verde de éxito, rojo de error). Los colores
+   van en literal por ser de estado, fuera de la paleta de marca. */
 .contact__feedback {
   padding: 14px 18px;
   margin-bottom: 24px;
@@ -84,6 +90,9 @@
   color: var(--muted);
 }
 
+/* ── Campos ────────────────────────────────────────────────────────
+   appearance:none + border-radius:0 quitan el estilo nativo de iOS/Safari.
+   Al anular el outline, el foco se marca con el color del borde. */
 .contact__input,
 .contact__textarea {
   width: 100%;
@@ -141,6 +150,8 @@
 
 /* ── Responsive ── */
 @media (max-width: 640px) {
+  /* En móvil el formulario es más alto que la pantalla: se alinea arriba
+     (flex-start) en vez de centrado, para que no quede cortado por arriba. */
   .contact {
     padding: 40px 16px;
     align-items: flex-start;

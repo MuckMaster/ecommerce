@@ -2,12 +2,16 @@ import { useNavigate } from 'react-router-dom'
 import { useCart } from '../../context/CartContext'
 import './Cart.css'
 
+// Página del carrito. No tiene estado propio: todo sale del CartContext,
+// así el contador de la navbar y esta vista nunca se desincronizan.
 function Cart() {
   const navigate = useNavigate()
   const { cart, loading, updateItem, removeItem, clearCart } = useCart()
 
   if (loading) return <div className="cart__loading">Cargando carrito...</div>
 
+  // El backend devuelve null cuando el carrito se ha vaciado,
+  // por eso se comprueban los dos casos.
   const isEmpty = !cart || cart.items.length === 0
 
   return (
@@ -43,6 +47,8 @@ function Cart() {
                   </div>
 
                   <div className="cart__item-controls">
+                    {/* Bajar de 1 unidad equivale a quitar la línea:
+                        así no queda un item con cantidad 0 en el carrito. */}
                     <button
                       className="cart__qty-btn"
                       onClick={() => item.qty > 1

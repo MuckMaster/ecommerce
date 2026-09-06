@@ -7,16 +7,23 @@ import { API_URL } from '../../config'
 
 
 
+// Barra de navegación fija, presente en todas las páginas.
+// Se oculta al bajar, muestra el contador del carrito y genera
+// el desplegable de categorías a partir de la API.
 function Navbar({ onAuthOpen }) {
     const navigate = useNavigate()
     const { user } = useAuth()
 
-    const [hidden, setHidden] = useState(false)
-    const [menuOpen, setMenuOpen] = useState(false)
+    const [hidden, setHidden] = useState(false)      // navbar oculta al hacer scroll hacia abajo
+    const [menuOpen, setMenuOpen] = useState(false)  // menú hamburguesa (móvil)
     const [dropdownOpen, setDropdownOpen] = useState(false)
 
+    // En ratón el desplegable se abre con :hover desde el CSS; en táctil no existe
+    // el hover, así que ahí hace falta abrirlo por clic (ver el onClick del li.dropdown).
     const isHoverDevice = window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
+    // Guarda la posición anterior del scroll. Es un ref y no un estado
+    // porque cambia en cada scroll y no debe provocar re-render.
     const lastScroll = useRef(0)
 
     const { itemCount } = useCart()
@@ -24,6 +31,8 @@ function Navbar({ onAuthOpen }) {
     // Categorías para generar los enlaces del dropdown automáticamente
     const [categories, setCategories] = useState([])
 
+    // Oculta la navbar al bajar y la devuelve al subir. El margen de 80px evita
+    // que parpadee con los micro-scrolls de la parte alta de la página.
     useEffect(() => {
         const handleScroll = () => {
             const currentScroll = window.scrollY
@@ -43,6 +52,8 @@ function Navbar({ onAuthOpen }) {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
     
+    // Cierra el desplegable al pulsar en cualquier sitio fuera de él.
+    // closest('.dropdown') distingue si el clic ocurrió dentro del propio menú.
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (!e.target.closest('.dropdown')) {
@@ -55,11 +66,15 @@ function Navbar({ onAuthOpen }) {
         }
     }, [])
 
+    // Bloquea el scroll del fondo mientras el menú móvil está abierto.
+    // La limpieza lo restaura también si el componente se desmonta abierto.
     useEffect(() => {
         document.body.style.overflow = menuOpen ? 'hidden' : ''
         return () => { document.body.style.overflow = '' }
     }, [menuOpen])
 
+    // Categorías del desplegable: se piden una sola vez al montar,
+    // así al añadir una categoría nueva en el panel aparece sola en el menú.
      useEffect(() => {
         async function fetchCategories() {
             try {
@@ -96,6 +111,7 @@ function Navbar({ onAuthOpen }) {
                     Contacto
                 </button>
 
+                {/* Con sesión iniciada lleva a "Mi cuenta"; si no, abre el modal de acceso */}
                 {user ? (
                     <button
                         className="navbar__item__2"
@@ -119,6 +135,10 @@ function Navbar({ onAuthOpen }) {
                     Catalogo
                 </button> */}
                 
+                {/* Desplegable de catálogo. La clase 'active' solo se usa en táctil:
+                    en dispositivos con ratón lo abre el :hover del CSS.
+                    stopPropagation impide que este mismo clic lo cierre
+                    a través del listener de "clic fuera". */}
                 <li
                     className={`navbar__item dropdown ${dropdownOpen ? 'active' : ''}`}
                     onClick={(e) => {
@@ -156,6 +176,7 @@ function Navbar({ onAuthOpen }) {
                 className="navbar__item__2"
                 onClick={() => { navigate('/carrito'); setMenuOpen(false) }}
                 >
+                    {/* El contador solo se pinta si hay algo en el carrito */}
                     Carrito {itemCount > 0 && <span className="navbar__badge">{itemCount}</span>}
                 </button>
             </nav>

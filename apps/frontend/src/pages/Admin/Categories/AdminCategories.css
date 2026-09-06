@@ -1,4 +1,7 @@
-/* Layout de dos columnas: formulario + lista */
+/* Layout de dos columnas: formulario + lista.
+   El formulario lleva ancho fijo (380px) y la lista se queda con el resto.
+   align-items:start evita que la columna más corta se estire a la altura
+   de la otra, que es lo que haría un grid por defecto. */
 .admin-categories__layout {
   display: grid;
   grid-template-columns: 380px 1fr;
@@ -31,7 +34,8 @@
   transition: background var(--transition);
 }
 
-/* Resalta el item que se está editando */
+/* Resalta el item que se está editando, para saber a qué categoría
+   corresponden los datos cargados en el formulario de la izquierda. */
 .admin-category-item--active {
   border-left: 3px solid var(--dark);
 }
@@ -75,7 +79,8 @@
   padding: 24px 0;
 }
 
-/* Responsive */
+/* Responsive: por debajo de 900px las dos columnas se apilan
+   (el formulario arriba y la lista debajo). */
 @media (max-width: 900px) {
   .admin-categories__layout {
     grid-template-columns: 1fr;

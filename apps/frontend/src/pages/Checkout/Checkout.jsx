@@ -5,11 +5,15 @@ import { useCart } from '../../context/CartContext'
 import { API_URL } from '../../config.js'
 import './Checkout.css'
 
+// Datos de envío y salto a la pasarela de pago. Esta pantalla no cobra:
+// pide al backend una sesión de Stripe y redirige a su checkout alojado,
+// de modo que los datos de tarjeta nunca pasan por esta aplicación.
 function Checkout() {
   const navigate = useNavigate()
   const { user, accessToken } = useAuth()
   const { cart } = useCart()
 
+  // Si hay sesión iniciada se precargan email y nombre del usuario.
   const [form, setForm] = useState({
     email: user?.email || '',
     shipping_name: user?.name || '',
@@ -50,6 +54,8 @@ function Checkout() {
       ...(form.notes && { notes: form.notes }),
     }
 
+    // Se identifica el pedido por token si hay sesión, y por sessionId si es
+    // una compra como invitado: son excluyentes, el backend espera uno u otro.
     const sessionId = localStorage.getItem('sessionId')
     const headers = {
       'Content-Type': 'application/json',
@@ -74,6 +80,8 @@ function Checkout() {
         return
       }
 
+      // Salida fuera de la SPA: se usa window.location y no navigate()
+      // porque checkoutUrl apunta al dominio de Stripe.
       window.location.href = data.checkoutUrl
 
     } catch {
@@ -82,6 +90,7 @@ function Checkout() {
     }
   }
 
+  // Sin carrito no hay nada que pagar: se muestra el aviso en lugar del formulario.
   if (!cart || cart.items.length === 0) {
     return (
       <main className="checkout">

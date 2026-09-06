@@ -1,10 +1,15 @@
+/* ── Estructura del panel ──────────────────────────────────────────
+   Dos columnas: barra lateral de ancho fijo y contenido flexible.
+   El fondo gris claro va en literal (no es color de la tienda). */
 .admin-layout {
   display: flex;
   min-height: 100vh;
   background: #F8F7F5;
 }
 
-/* Barra lateral fija */
+/* Barra lateral fija.
+   sticky + height:100vh la mantiene a la vista mientras se hace scroll
+   en el contenido; flex-shrink:0 impide que una tabla ancha la estreche. */
 .admin-sidebar {
   width: 220px;
   flex-shrink: 0;
@@ -29,6 +34,8 @@
   margin-bottom: 16px;
 }
 
+/* flex:1 empuja el bloque del pie (ver tienda / cerrar sesión)
+   hasta abajo del todo, ocupando el espacio sobrante. */
 .admin-sidebar__nav {
   display: flex;
   flex-direction: column;
@@ -92,7 +99,12 @@
   overflow-y: auto;
 }
 
-/* ── Responsive ── */
+/* ── Responsive ──
+   En móvil la barra lateral pasa a ser una barra superior horizontal:
+   deja de ser sticky (position:static), se pone en fila y admite scroll
+   lateral (overflow-x) si los enlaces no caben. El indicador de sección
+   activa cambia de borde izquierdo a borde inferior, acorde a la nueva
+   orientación, y white-space:nowrap evita que los enlaces se partan. */
 @media (max-width: 768px) {
   .admin-layout {
     flex-direction: column;

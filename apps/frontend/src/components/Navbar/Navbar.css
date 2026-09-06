@@ -1,3 +1,7 @@
+/* ── Barra de navegación ───────────────────────────────────────────
+   sticky + top:0 la mantiene visible al hacer scroll. El z-index alto
+   la deja por encima del contenido de las páginas, y la transición del
+   transform es la que anima el ocultado de .navbar-hidden. */
 .navbar {
     position: sticky;
     top: 0;
@@ -11,10 +15,15 @@
     transition: transform 0.3s ease;
 }
 
+/* La sube justo su propia altura al bajar la página. Se desplaza en vez de
+   ocultarse con display para poder animar la salida y la vuelta. */
 .navbar-hidden {
     transform: translateY(-100%)
 }
 
+/* ── Logo y enlaces ────────────────────────────────────────────────
+   Son <button>, por eso hace falta anular fondo, borde y appearance
+   para que no se vean como botones del sistema. */
 .navbar__logo {
     font-family: var(--font-display);
     font-size: 1.5rem;
@@ -34,6 +43,8 @@
     gap: 32px;
 }
 
+/* El borde inferior nace transparente y solo cambia de color en :hover:
+   así el subrayado aparece sin que el texto se mueva de sitio. */
 .navbar__link {
     background: none;
     border: none;
@@ -93,10 +104,16 @@
     color: var(--dark);
 }
 
+/* ── Desplegable de catálogo ───────────────────────────────────────
+   position:relative en el padre para que el menú absoluto se sitúe
+   respecto a él y no respecto a la página. */
 .dropdown {
     position: relative
 }
 
+/* El menú se oculta con opacity + pointer-events (no con display) para
+   poder animar su entrada. pointer-events:none impide que se pueda
+   pulsar mientras está invisible. top:100% lo cuelga justo debajo. */
 .dropdown__menu {
     position: absolute;
     min-width: 180px;
@@ -123,6 +140,8 @@
   display: none;
 }
 
+/* ── Menú hamburguesa (solo móvil) ─────────────────────────────────
+   Oculto por defecto; la media query de 768px lo pasa a flex. */
 .navbar__hamburger {
   display: none;
   flex-direction: column;
@@ -143,7 +162,10 @@
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-/* Las 3 rayas se convierten en X al abrir */
+/* Las 3 rayas se convierten en X al abrir:
+   la primera y la tercera se desplazan al centro y giran 45º en sentidos
+   opuestos, y la del medio se desvanece. Los 6.5px son la mitad del hueco
+   entre rayas (gap 5px + altura 1.5px). */
 .navbar__hamburger--open span:nth-child(1) {
   transform: translateY(6.5px) rotate(45deg);
 }
@@ -154,6 +176,9 @@
   transform: translateY(-6.5px) rotate(-45deg);
 }
 
+/* Contador del carrito: círculo con el número centrado.
+   inline-flex lo mantiene en la línea del texto "Carrito", y el
+   border-radius 50% sobre una caja cuadrada de 17px lo hace redondo. */
 .navbar__badge {
   display: inline-flex;
   align-items: center;
@@ -168,7 +193,10 @@
   margin-left: 4px;
 }
 
-/*PC*/
+/* ── PC ────────────────────────────────────────────────────────────
+   Solo en dispositivos con ratón real el desplegable se abre en hover.
+   Se acota con esta media query porque en táctil el :hover se queda
+   "pegado" tras el toque; ahí lo abre el estado dropdownOpen del JSX. */
 @media (hover: hover) and (pointer: fine) {
     .dropdown:hover .dropdown__menu {
         opacity: 1;
@@ -177,7 +205,9 @@
     }
 }
 
-/*Movil*/
+/* ── Móvil ─────────────────────────────────────────────────────────
+   Los enlaces dejan de ser una fila y pasan a ser un panel lateral fijo
+   que entra deslizándose desde la derecha. */
 @media (max-width: 768px) {
     .navbar {
         padding: 12px 16px;
@@ -198,6 +228,9 @@
         z-index: 150;
     }
 
+    /* Panel lateral: fijo a la derecha y a toda la altura. Se mantiene
+       fuera de pantalla con translateX(100%) y entra al añadirse la clase
+       --open. Se desplaza en lugar de mostrarse/ocultarse para animarlo. */
     .navbar__links {
         display: flex;
         position: fixed;
@@ -225,6 +258,8 @@
         font-size: 1.1rem;
     }
 
+    /* Dentro del panel el submenú deja de flotar y pasa a ser una lista
+       indentada más (position: static), sin borde ni animación. */
     .dropdown__menu {
         position: static;
         border: none;
@@ -236,6 +271,12 @@
         display: none;
     }
 
+    /* OJO — estas dos reglas están rotas y se dejan tal cual para no
+       alterar el comportamiento actual:
+       · la de abajo declara display:block y luego display:none, así que
+         gana la segunda y el submenú no llega a verse en móvil;
+       · la siguiente lleva la clase mal escrita (.dropwdown__menu),
+         por lo que no aplica a ningún elemento. */
     .dropdown.active .dropdown__menu {
         display: block;
         opacity: 0;

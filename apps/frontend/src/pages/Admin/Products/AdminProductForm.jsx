@@ -5,6 +5,9 @@ import { API_URL, imageUrl } from '../../../config.js'
 import '../Orders/AdminOrders.css'
 import './AdminProducts.css'
 
+// Formulario de alta y edición de producto. La misma pantalla sirve para
+// ambos casos: lo decide la presencia del :id en la ruta.
+// En edición añade además las secciones de variantes e imágenes.
 function AdminProductForm() {
   const { id } = useParams()         // undefined si es creación, string si es edición
   const navigate = useNavigate()
@@ -38,6 +41,9 @@ function AdminProductForm() {
   // Datos del producto completo (solo en edición) — para variantes e imágenes
   const [product, setProduct] = useState(null)
 
+  // Solo en edición se piden los datos del producto; en creación el
+  // formulario arranca vacío. Depende de [id] para recargar si se navega
+  // de un producto a otro sin desmontar el componente.
   useEffect(() => {
     if (isEditing) fetchProduct()
   }, [id])
@@ -59,6 +65,9 @@ function AdminProductForm() {
     fetchCategories()
   }, [])   // [] = solo una vez al montar
 
+  // Carga el producto y vuelca sus datos al formulario. Se pasa como
+  // onRefresh a las secciones de variantes e imágenes para que, tras
+  // cualquier cambio suyo, se repinte todo con los datos ya guardados.
   async function fetchProduct() {
     setLoading(true)
     try {
@@ -68,7 +77,6 @@ function AdminProductForm() {
         throw new Error(data.error || 'Error al cargar el producto')
       }
       const data = await res.json()
-      console.log('Producto completo:', data)
       setProduct(data)
       // Rellenamos el formulario con los datos existentes
       setForm({
@@ -637,6 +645,9 @@ function AdminImages({ productId, images, variants, onRefresh }) {
       // Si hay variantId lo añadimos al form-data
       if (variantId) formData.append('variant_id', variantId)
 
+      // Aquí se usa fetch directo y no apiFetch: apiFetch fuerza
+      // Content-Type: application/json, y con FormData el navegador tiene que
+      // poner él mismo el multipart/form-data con su boundary.
       const res = await fetch(`${API_URL}/api/products/${productId}/images`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${accessToken}` },

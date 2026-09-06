@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../context/AuthContext'
 import '../Orders/AdminOrders.css'
 
+// Traducción de los estados del backend. Aquí no llevan color asociado
+// (a diferencia de AdminOrders) porque en esta pantalla solo son texto.
 const ORDER_STATUSES = {
   PENDING:   'Pendiente',
   PAID:      'Pagado',
@@ -11,6 +13,8 @@ const ORDER_STATUSES = {
   REFUNDED:  'Reembolsado',
 }
 
+// Ficha de un pedido: datos de envío, líneas, totales, historial
+// y el formulario para cambiarle el estado.
 function AdminOrderDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -50,6 +54,8 @@ function AdminOrderDetail() {
     }
   }
 
+  // Cambia el estado del pedido. Si el seleccionado es el que ya tiene,
+  // se corta aquí para no registrar una entrada vacía en el historial.
   async function handleStatusUpdate() {
     if (newStatus === order.status) return
     setUpdating(true)
@@ -83,6 +89,8 @@ function AdminOrderDetail() {
     }
   }
 
+  // Salidas obligatorias antes del render: más abajo se accede a order.*
+  // sin comprobar nulos.
   if (loading) return <div className="admin-loading">Cargando pedido...</div>
   if (error) return <div className="admin-error">{error}</div>
 

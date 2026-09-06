@@ -4,10 +4,14 @@ import { API_URL } from '../config.js'
 
 const CartContext = createContext(null)
 
+// Hook de acceso al carrito. Evita tener que importar CartContext
+// y llamar a useContext en cada componente que lo consume.
 export function useCart() {
     return useContext(CartContext)
 }
 
+// Genera un UUID v4 propio en lugar de usar crypto.randomUUID(),
+// que no está disponible en contextos no seguros (http:// en pruebas locales).
 function generateSessionId() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
         const r = Math.random() *16 | 0
@@ -16,6 +20,9 @@ function generateSessionId() {
     })    
 }
 
+// Identificador persistente del visitante anónimo: permite que el backend
+// asocie un carrito a alguien que todavía no ha iniciado sesión.
+// Se crea la primera vez y se reutiliza en todas las visitas posteriores.
 function getSessionId() {
     let sessionId = localStorage.getItem('sessionId')
     if (!sessionId) {
@@ -28,18 +35,26 @@ function getSessionId() {
 export function CartProvider({ children }) {
     const { accessToken, apiFetch } = useAuth()
 
+    // Carrito completo tal cual lo devuelve el backend (items, totales...).
+    // null = todavía no se ha cargado o está vacío.
     const [cart, setCart] = useState(null)
 
     const [loading, setLoading] =useState(false)
 
     const sessionId = getSessionId()
 
+    // Cabeceras comunes a todas las peticiones del carrito.
+    // Siempre viaja X-Session-id (carrito anónimo) y, si hay sesión iniciada,
+    // se añade además el Bearer para que el backend pueda fusionar
+    // el carrito anónimo con el del usuario.
     const cartHeaders = {
         'Content-Type': 'application/json',
         'X-Session-id': sessionId,
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
     }
 
+    // Recarga el carrito desde el backend. Depende de accessToken para que,
+    // al iniciar o cerrar sesión, se vuelva a pedir el carrito correcto.
     const fetchCart = useCallback(async () => {
         setLoading(true)
         try {
@@ -55,10 +70,14 @@ export function CartProvider({ children }) {
         }
     }, [accessToken])
 
+    // Carga inicial del carrito y recarga automática cuando cambia la sesión.
     useEffect(() => {
         fetchCart()
     }, [fetchCart])
 
+    // Añade un producto al carrito. Los ids se envían como String porque
+    // el backend los espera en ese formato; variantId solo se incluye
+    // si el producto tiene variante seleccionada.
     async function addItem(productId, qty = 1, variantId = null) {
         try {
             const res = await fetch(`${API_URL}/api/cart/items`, {
@@ -71,13 +90,15 @@ export function CartProvider({ children }) {
                 })
             })
             const data = await res.json()
-            console.log('Respuesta del backend:', data)
+            // El carrito no se reconstruye con esta respuesta: se vuelve a pedir
+            // entero con fetchCart() para no desincronizar totales ni stock.
             if (res.ok) await fetchCart()
         } catch (err) {
             console.error ( 'Error al añadir al carrito:', err )}
     }
 
 
+    // Cambia la cantidad de una línea ya existente del carrito.
     async function updateItem(itemId, qty) {
         try {
             const res = await fetch(`${API_URL}/api/cart/items/${itemId}`, {
@@ -86,13 +107,15 @@ export function CartProvider({ children }) {
                 body: JSON.stringify({ qty })
             })
             const data = await res.json()
-            console.log ('updateItem respuesta:', data)
+            // Igual que en addItem: se recarga el carrito completo en lugar de
+            // aplicar la respuesta parcial sobre el estado local.
             if (res.ok) await fetchCart()
         } catch (err){
             console.error('Error al actualizar el carrito:', err)
         }
     }
 
+    // Elimina una línea concreta del carrito.
     async function removeItem(itemId) {
         try {
             const res = await fetch(`${API_URL}/api/cart/items/${itemId}`, {
@@ -105,6 +128,8 @@ export function CartProvider({ children }) {
         }
     }
 
+    // Vacía el carrito entero. Aquí sí se pone el estado a null directamente
+    // en vez de recargar: el resultado conocido es "carrito vacío".
     async function clearCart() {
 
         try {
@@ -118,6 +143,8 @@ export function CartProvider({ children }) {
         }
     }
 
+    // Total de unidades (no de líneas) para el contador del icono del carrito.
+    // Si aún no hay carrito cargado devuelve 0 en lugar de undefined.
     const itemCount = cart?.items?.reduce((acc, item) => acc + item.qty, 0) ?? 0
 
     return (

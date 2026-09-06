@@ -12,6 +12,8 @@ const ORDER_STATUSES = {
   REFUNDED:  { label: 'Reembolsado', color: '#6B6259' },
 }
 
+// Listado de pedidos con búsqueda, filtros por estado y fecha, y paginación.
+// El filtrado se hace en el backend: aquí solo se componen los query params.
 function AdminOrders() {
   const navigate = useNavigate()
   const { apiFetch } = useAuth()
@@ -31,6 +33,9 @@ function AdminOrders() {
     limit: 20,
   })
 
+  // Solo depende de filters.page: al escribir en la búsqueda o cambiar
+  // el estado no se lanza una petición por tecla; esos filtros se aplican
+  // al pulsar "Buscar" (handleSearch).
   useEffect(() => {
     fetchOrders()
   }, [filters.page]) // recargamos cuando cambia la página
@@ -158,6 +163,9 @@ function AdminOrders() {
                       <td>{order.shipping_name}</td>
                       <td>{order.email}</td>
                       <td>
+                        {/* Si llegara un estado nuevo no contemplado en
+                            ORDER_STATUSES se muestra su código en crudo
+                            en lugar de dejar la celda vacía. */}
                         <span
                           className="admin-status-badge"
                           style={{ color: ORDER_STATUSES[order.status]?.color }}

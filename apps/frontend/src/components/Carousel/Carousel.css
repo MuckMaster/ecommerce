@@ -4,18 +4,27 @@
     background: var(--dark);
 }
 
+/* ── Cinta de imágenes ─────────────────────────────────────────────
+   width: max-content deja que la fila crezca según su contenido en vez
+   de ceñirse al ancho del contenedor; el overflow:hidden del padre
+   recorta lo que sale de pantalla. */
 .carousel__track {
     display: flex;
     gap: 4px;
     width: max-content;
-    animation: carousel-scroll 20s linear infinite; 
+    animation: carousel-scroll 20s linear infinite;
 }
 
+/* Desplaza la cinta justo la mitad de su ancho, que es exactamente el
+   primer juego de imágenes (el JSX las duplica). Al reiniciarse el ciclo
+   la vista queda igual que al empezar, así que el bucle no se ve. */
 @keyframes carousel-scroll {
     0% { transform: translateX(0); }
     100%{ transform: translateX(-50%); }
 }
 
+/* Diapositiva en formato vertical 3:4, el mismo de las tarjetas.
+   flex-shrink:0 impide que flex las estreche para que quepan todas. */
 .carousel__slide {
     flex-shrink: 0;
     height: 700px;
@@ -24,6 +33,7 @@
     position: relative;
 }
 
+/* cover llena el marco recortando el sobrante, sin deformar la foto. */
 .carousel__slide img {
     width: 100%;
     height: 100%;

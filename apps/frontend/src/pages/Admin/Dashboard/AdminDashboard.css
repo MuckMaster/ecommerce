@@ -1,4 +1,7 @@
-/* Estilos compartidos por todas las páginas del admin */
+/* Estilos compartidos por todas las páginas del admin
+   (títulos, avisos de carga y error): aunque el archivo se llame
+   AdminDashboard.css, estas clases las reutilizan el resto de pantallas
+   del panel, que importan esta hoja. */
 .admin-loading {
   font-size: 0.85rem;
   letter-spacing: 0.1em;
@@ -38,6 +41,9 @@
   border-bottom: 1px solid var(--sand);
 }
 
+/* ── Rejilla de tarjetas de estadísticas ───────────────────────────
+   3 columnas iguales en escritorio; baja a 2 y a 1 en las media queries
+   del final para que las cifras no se estrechen hasta partirse. */
 .admin-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -70,6 +76,9 @@
   color: var(--dark);
 }
 
+/* Modificadores de color por tipo de dato: ámbar para lo pendiente,
+   verde para lo cobrado. Los importes usan un cuerpo algo menor
+   porque llevan decimales y el símbolo de euro. */
 .admin-stat-card__value--warning { color: #B8860B; }
 .admin-stat-card__value--success { color: #3d7a3d; }
 .admin-stat-card__value--revenue {
