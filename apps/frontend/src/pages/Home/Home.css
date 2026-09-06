@@ -19,10 +19,32 @@
 }
 
 .home__featured-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 1px;
-  padding: 0px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home__featured-grid > * {
+  /* Cada tarjeta: crece para llenar, base ~25% (4 por fila),
+     con el gap descontado. flex-grow reparte el espacio sobrante. */
+  flex: 1 1 calc(25% - 1px);
+  min-width: 250px;
+}
+
+/* Imagen hero a todo el ancho de la pantalla */
+.home__hero {
+    width: 100%;
+    line-height: 0;          /* elimina el pequeño espacio bajo la imagen */
+}
+
+.home__hero-img {
+    width: 100%;             /* ocupa todo el ancho del contenedor */
+    margin-bottom: 10px;
+    height: auto;            /* en PC, la imagen manda su proporción natural */
+    display: block;          /* evita el hueco fantasma de las imágenes inline */
+    object-fit: cover;       /* si le damos altura fija, recorta sin deformar */
 }
 
 @media (max-width: 1024px) {
@@ -48,5 +70,14 @@
 
     .home__featured-title {
         font-size: 1.6rem;
+    }
+}
+
+/* En móvil forzamos una altura para que no se vea diminuta.
+   object-fit: cover hace que la foto llene ese alto recortando lo que sobre,
+   en lugar de encogerse entera. */
+@media (max-width: 640px) {
+    .home__hero-img {
+        height: 60vh;        /* 60% de la altura de la pantalla — ajústalo a gusto */
     }
 }

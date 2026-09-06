@@ -9,8 +9,8 @@ return [
 
     'allowed_methods' => ['*'],
 
-    // '*' permite cualquier origen — en producción cambiar por el dominio real del frontend
-    'allowed_origins' => ['*'],
+        // Dominios del frontend autorizados a llamar a la API
+    'allowed_origins' => ['https://rivetbag.com', 'http://localhost:5173'],
 
     'allowed_origins_patterns' => [],
 

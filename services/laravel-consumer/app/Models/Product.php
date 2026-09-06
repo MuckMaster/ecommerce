@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 // Modelo de producto con soft delete manual (deleted_at en lugar del SoftDeletes de Laravel)
 // Usamos soft delete manual porque la BD ya tiene el campo deleted_at de Prisma
@@ -22,6 +23,7 @@ class Product extends Model
         'currency',
         'status',        // DRAFT o PUBLISHED
         'material',
+        'care',
         'is_featured',
         'deleted_at',
     ];
@@ -49,5 +51,18 @@ class Product extends Model
     public function productCategories(): HasMany
     {
         return $this->hasMany(ProductCategory::class, 'product_id');
+    }
+
+    // Relación muchos-a-muchos con categorías a través de la tabla product_categories.
+    // Esto es DISTINTO de productCategories() (que apunta a la tabla intermedia en sí):
+    // aquí saltamos directamente a las categorías, lo que nos permite usar sync().
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Category::class,        // el modelo destino
+            'product_categories',   // la tabla intermedia (pivot)
+            'product_id',           // clave de ESTE modelo (product) en la pivot
+            'category_id'           // clave del modelo destino (category) en la pivot
+        );
     }
 }

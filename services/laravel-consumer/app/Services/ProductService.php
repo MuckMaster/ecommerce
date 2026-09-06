@@ -41,6 +41,7 @@ class ProductService
             'currency'          => $product->currency,
             'status'            => $product->status,
             'material'          => $product->material,
+            'care'              => $product->care,
             'is_featured'       => $product->is_featured,
             'created_at'        => $product->created_at,
             'updated_at'        => $product->updated_at,
@@ -199,10 +200,16 @@ private function defaultColorCss(string $color): string
             'description'       => $data['description'] ?? null,
             'price_cents'       => $this->eurosToCents($data['price']),
             'material'          => $data['material'] ?? null,
+            'care'              => $data['care'] ?? null,
             'is_featured'       => $data['is_featured'] ?? false,
             'status'            => $data['status'] ?? 'DRAFT',
         ]);
-
+        // Si llegan category_ids, sincronizamos la relación muchos-a-muchos.
+        // sync() crea las filas necesarias en product_categories.
+        // Usamos ?? [] por si no viene el campo (no peta, simplemente no asigna).
+        if (isset($data['category_ids'])) {
+            $product->categories()->sync($data['category_ids']);
+        }
         // Cargamos las relaciones vacías para que el formato sea consistente
         $product->load(['productImages', 'productVariants', 'productCategories.categories']);
         return $this->formatProduct($product);
@@ -227,8 +234,14 @@ private function defaultColorCss(string $color): string
         if (isset($data['material']))          $updateData['material']          = $data['material'];
         if (array_key_exists('is_featured', $data)) $updateData['is_featured'] = $data['is_featured'];
         if (isset($data['status']))            $updateData['status']            = $data['status'];
+        if (isset($data['care']))              $updateData['care']              = $data['care'];
 
         $product->update($updateData);
+        // Al editar, sync() reemplaza limpiamente: quita las categorías que ya no
+        // están, añade las nuevas, deja las que siguen. Justo lo que queremos.
+        if (isset($data['category_ids'])) {
+            $product->categories()->sync($data['category_ids']);
+        }
         $product->load(['productImages', 'productVariants', 'productCategories.categories']);
         return $this->formatProduct($product);
     }

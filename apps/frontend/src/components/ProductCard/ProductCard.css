@@ -2,6 +2,7 @@
     cursor: pointer;
     background: var(--cream);
     outline-offset: 2px;
+    margin: 5px;
 }
 
 .product-card:focus-visible {

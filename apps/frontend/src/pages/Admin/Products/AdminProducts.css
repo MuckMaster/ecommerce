@@ -5,6 +5,18 @@
   margin-bottom: 32px;
 }
 
+.admin-form__checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.admin-form__checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
 .admin-table__actions {
   display: flex;
   gap: 8px;

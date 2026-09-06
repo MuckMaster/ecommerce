@@ -4,14 +4,12 @@ import ProductCard from '../../components/ProductCard/ProductCard'
 import { API_URL } from '../../config'
 import './Catalogue.css'
 
-// Materiales que consideramos "piel" — el resto se considera "tela"
-const PIEL_MATERIALS = ['piel', 'cuero', 'ante']
-
 function Catalogue() {
   const [searchParams] = useSearchParams()
-  const tipo = searchParams.get('t') // 'tela' | 'piel' | null
+  const catSlug = searchParams.get('cat') // slug de categoría o null
 
   const [products, setProducts] = useState([])
+  const [categoryName, setCategoryName] = useState('') // para el título
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -19,7 +17,11 @@ function Catalogue() {
     async function fetchProducts() {
       setLoading(true)
       try {
-        const res = await fetch(`${API_URL}/api/products`)
+        // Si hay categoría, se la pasamos a la API (filtra en el backend)
+        const url = catSlug
+          ? `${API_URL}/api/products?category=${catSlug}`
+          : `${API_URL}/api/products`
+        const res = await fetch(url)
         if (!res.ok) throw new Error('Error al cargar productos')
         const data = await res.json()
         setProducts(data)
@@ -30,28 +32,15 @@ function Catalogue() {
       }
     }
     fetchProducts()
-  }, [])
-
-  // Filtramos según el material del producto
-  const filteredProducts = products.filter(p => {
-    if (!tipo) return true // sin filtro mostramos todos
-
-    // Normalizamos el material a minúsculas para comparar
-    const material = (p.material || '').toLowerCase()
-    const esPiel = PIEL_MATERIALS.some(m => material.includes(m))
-
-    return tipo === 'piel' ? esPiel : !esPiel
-  })
+  }, [catSlug]) // recarga cuando cambia la categoría
 
   return (
     <main className="catalogue">
       <div className="catalogue__header">
         <h1 className="catalogue__title">
-          {tipo === 'tela' && 'Bolsos de tela'}
-          {tipo === 'piel' && 'Bolsos de piel'}
-          {!tipo && 'Catálogo completo'}
+          {catSlug ? `Categoría: ${catSlug}` : 'Catálogo completo'}
         </h1>
-        <span className="catalogue__count">{filteredProducts.length} productos</span>
+        <span className="catalogue__count">{products.length} productos</span>
       </div>
 
       {loading ? (
@@ -60,7 +49,7 @@ function Catalogue() {
         <p className="catalogue__error">{error}</p>
       ) : (
         <div className="catalogue__grid">
-          {filteredProducts.map(product => (
+          {products.map(product => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

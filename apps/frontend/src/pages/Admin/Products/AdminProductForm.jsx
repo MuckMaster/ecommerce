@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../context/AuthContext'
-import { API_URL } from '../../../config.js'
+import { API_URL, imageUrl } from '../../../config.js'
 import '../Orders/AdminOrders.css'
 import './AdminProducts.css'
 
@@ -9,6 +9,11 @@ function AdminProductForm() {
   const { id } = useParams()         // undefined si es creación, string si es edición
   const navigate = useNavigate()
   const { apiFetch } = useAuth()
+
+  // Lista de todas las categorías disponibles (para pintar los checkboxes)
+  const [categories, setCategories] = useState([])
+  // IDs de las categorías marcadas — array de strings, ej: ["1", "2"]
+  const [selectedCategories, setSelectedCategories] = useState([])
 
   const isEditing = !!id             // true si estamos editando
 
@@ -20,6 +25,7 @@ function AdminProductForm() {
     description: '',
     price: '',
     material: '',
+    care: '',
     is_featured: false,
     status: 'DRAFT',
   })
@@ -35,6 +41,23 @@ function AdminProductForm() {
   useEffect(() => {
     if (isEditing) fetchProduct()
   }, [id])
+
+  // Cargamos las categorías disponibles una sola vez al montar el componente.
+  // Se necesita tanto al crear como al editar, por eso no depende de isEditing.
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const res = await apiFetch('/api/categories')
+        if (res.ok) {
+          const data = await res.json()
+          setCategories(data)   // el endpoint devuelve un array plano
+        }
+      } catch (err) {
+        console.error('Error cargando categorías:', err)
+      }
+    }
+    fetchCategories()
+  }, [])   // [] = solo una vez al montar
 
   async function fetchProduct() {
     setLoading(true)
@@ -55,9 +78,16 @@ function AdminProductForm() {
         description: data.description || '',
         price: data.price || '',
         material: data.material || '',
+        care: data.care || '',
         is_featured: data.is_featured || false,
         status: data.status || 'DRAFT',
       })
+      // Pre-marcamos las categorías que el producto ya tiene.
+      // La API las devuelve como [{ category_id: "1", categories: {...} }, ...]
+      // así que extraemos solo los category_id para el estado.
+      setSelectedCategories(
+        (data.product_categories || []).map(pc => pc.category_id)
+      )
     } catch (err) {
       setError(err.message)
     } finally {
@@ -96,6 +126,15 @@ function AdminProductForm() {
     }))
   }
 
+  // Añade o quita un category_id del array de seleccionadas (toggle).
+  function toggleCategory(categoryId) {
+    setSelectedCategories(prev =>
+      prev.includes(categoryId)
+        ? prev.filter(id => id !== categoryId)   // ya estaba → la quitamos
+        : [...prev, categoryId]                   // no estaba → la añadimos
+    )
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setSaving(true)
@@ -105,7 +144,8 @@ function AdminProductForm() {
     try {
       const body = {
         ...form,
-        price: parseFloat(form.price), // el backend espera number, no string
+        price: parseFloat(form.price), // el backend espera number, no 
+        category_ids: selectedCategories,
       }
 
       const res = await apiFetch(
@@ -182,6 +222,28 @@ function AdminProductForm() {
             </div>
           </div>
 
+          {/* ── Selector de categorías (checkboxes, multi-selección) ── */}
+          <div className="admin-form__field">
+            <label className="admin-form__label">Categorías</label>
+            <div className="admin-form__checkbox-group">
+              {categories.length === 0 ? (
+                <p className="admin-empty">No hay categorías disponibles.</p>
+              ) : (
+                categories.map(cat => (
+                  <label key={cat.id} className="admin-form__checkbox-item">
+                    <input
+                      type="checkbox"
+                      // marcado si su id está en el array de seleccionadas
+                      checked={selectedCategories.includes(cat.id)}
+                      onChange={() => toggleCategory(cat.id)}
+                    />
+                    {cat.name}
+                  </label>
+                ))
+              )}
+            </div>
+          </div>
+
           <div className="admin-form__field">
             <label className="admin-form__label">Descripción corta</label>
             <input
@@ -202,6 +264,18 @@ function AdminProductForm() {
               value={form.description}
               onChange={handleChange}
               rows={5}
+            />
+          </div>
+
+          <div className="admin-form__field">
+              <label className="admin-form__label">Cuidados</label>
+              <textarea
+              className="admin-input admin-textarea"
+              name="care"
+              value={form.care}
+              onChange={handleChange}
+              rows={3}
+              placeholder="Ej: Lavar a mano, no usar secadora..."
             />
           </div>
 
@@ -387,7 +461,7 @@ function AdminVariants({ productId, variants, onRefresh }) {
   async function handleDeleteVariant(variantId) {
     if (!window.confirm('¿Eliminar esta variante?')) return
     try {
-      const res = await apiFetch(`product/${productId}/api/variants/${variantId}`, { method: 'DELETE' })
+      const res = await apiFetch(`/api/products/${productId}/variants/${variantId}`, { method: 'DELETE' })
       if (!res.ok) {
         const data = await res.json()
         throw new Error(data.error || 'Error al eliminar')
@@ -645,7 +719,7 @@ function AdminImages({ productId, images, variants, onRefresh }) {
   function renderImage(img) {
     return (
       <div key={img.id} className="admin-image-card">
-        <img src={`${API_URL}${img.url}`} alt={img.alt_text || ''} className="admin-image-card__img" />
+        <img src={imageUrl(img.url)} alt={img.alt_text || ''} className="admin-image-card__img" />
         {img.is_primary && (
           <span className="admin-image-card__badge">Principal</span>
         )}

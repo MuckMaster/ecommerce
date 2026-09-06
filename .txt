@@ -1,0 +1,7 @@
+Base de datos: 
+-actualizar tabla productos, linkear categoria con material
+-añadir campo de cuidado por producto (hacer de lo ultimo, o hasta que Josep responda con los detalles de como aplicarlos)
+
+Navbar:
+-Automatizar funcion: A la hora de crear una categoria nueva, añadir categoria la navbar automaticamente.
+

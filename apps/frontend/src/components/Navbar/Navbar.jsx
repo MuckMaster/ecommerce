@@ -3,6 +3,8 @@ import './Navbar.css'
 import { useEffect, useState, useRef } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
+import { API_URL } from '../../config'
+
 
 
 function Navbar({ onAuthOpen }) {
@@ -18,6 +20,9 @@ function Navbar({ onAuthOpen }) {
     const lastScroll = useRef(0)
 
     const { itemCount } = useCart()
+
+    // Categorías para generar los enlaces del dropdown automáticamente
+    const [categories, setCategories] = useState([])
 
     useEffect(() => {
         const handleScroll = () => {
@@ -54,6 +59,18 @@ function Navbar({ onAuthOpen }) {
         document.body.style.overflow = menuOpen ? 'hidden' : ''
         return () => { document.body.style.overflow = '' }
     }, [menuOpen])
+
+     useEffect(() => {
+        async function fetchCategories() {
+            try {
+                const res = await fetch(`${API_URL}/api/categories`)
+                if (res.ok) setCategories(await res.json())
+            } catch (err) {
+                console.error('Error cargando categorías:', err)
+            }
+        }
+        fetchCategories()
+    }, [])
 
     return (
         <header className={`navbar ${hidden ? 'navbar-hidden' : ''}`}>
@@ -111,7 +128,7 @@ function Navbar({ onAuthOpen }) {
                 >
                     Catálogo
                     <ul className="dropdown__menu">
-                        <li 
+                                                <li 
                             className="navbar__link" 
                             onClick={() => {
                                 navigate('/catalogo') 
@@ -119,22 +136,20 @@ function Navbar({ onAuthOpen }) {
                         >
                             Catálogo completo
                         </li>
-                        <li 
-                            className="navbar__link" 
-                            onClick={() => {
-                                navigate('/catalogo?t=tela') 
-                                setDropdownOpen(false)}}
-                        >
-                            Bolsos de tela
-                        </li>
-                        <li 
-                            className="navbar__link" 
-                            onClick={() => {
-                                navigate('/catalogo?t=piel') 
-                                setDropdownOpen(false)}}
-                        >
-                            Bolsos de piel
-                        </li>
+                        {/* Un enlace por cada categoría, generado automáticamente.
+                            Filtra por el slug de la categoría (?cat=slug). */}
+                        {categories.map(cat => (
+                            <li
+                                key={cat.id}
+                                className="navbar__link"
+                                onClick={() => {
+                                    navigate(`/catalogo?cat=${cat.slug}`)
+                                    setDropdownOpen(false)
+                                }}
+                            >
+                                Bolsos de {cat.name}
+                            </li>
+                        ))}
                     </ul>
                 </li>
                 <button

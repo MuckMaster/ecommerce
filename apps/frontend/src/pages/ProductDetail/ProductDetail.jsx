@@ -233,16 +233,21 @@ function ProductDetail() {
           </button>
 
           <div className="detail__accordions">
-            {product.material && (
+              {(product.material || product.care) && (
               <Accordion
                 title="Composición y cuidados"
                 isOpen={openAccordion === 'Composición y cuidados'}
                 onToggle={() => toggleAccordion('Composición y cuidados')}
                 containerRef={infoRef}
               >
-                <p><strong>Material: </strong>{product.material}</p>
+                {product.material && (
+                  <p><strong>Material: </strong>{product.material}</p>
+                )}
+                {product.care && (
+                  <p><strong>Cuidados: </strong>{product.care}</p>
+                )}
               </Accordion>
-            )}
+              )}
             <Accordion
               title="Envios"
               isOpen={openAccordion === 'Envios'}

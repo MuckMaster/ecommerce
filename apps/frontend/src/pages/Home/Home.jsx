@@ -24,6 +24,16 @@ function Home() {
   return (
     <main className="home">
       <section className="home__featured" aria-label="Productos">
+
+        {/* Imagen hero a todo el ancho — asset estático desde /public/images */}
+      <section className="home__hero" aria-label="Imagen principal">
+        <img
+          src="../images/home/home.jpg"
+          alt="Rivet Bags"
+          className="home__hero-img"
+        />
+      </section>
+
         <div className="home__featured-grid">
           {featured.map(product => (
             <ProductCard key={product.id} product={product} />

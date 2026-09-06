@@ -10,9 +10,23 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 }
 
 // Cargamos el autoloader de Composer (todas las clases del proyecto y sus dependencias)
-require __DIR__.'/../../laravel-app/vendor/autoload.php';
+//Ruta para produccion//
+//Desactivar en local//
+//require __DIR__.'/../../laravel-app/vendor/autoload.php';//
 
+
+//Ruta para local//
+//Desactivar en produccion//
+require __DIR__.'/../vendor/autoload.php';
+
+//Ruta para produccion//
+//Desactivar en local//
 // Bootstrapeamos la aplicación y manejamos la petición HTTP entrante
-$app = require_once __DIR__.'/../../laravel-app/bootstrap/app.php';
+//$app = require_once __DIR__.'/../../laravel-app/bootstrap/app.php';//
+
+
+//Ruta para local//
+//Desactivar en produccion//
+$app = require_once __DIR__.'/../bootstrap/app.php';
 
 $app->handleRequest(Request::capture());

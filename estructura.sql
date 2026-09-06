@@ -558,7 +558,7 @@ CREATE TABLE `users` (
 -- Dump completed on 2026-08-19 15:42:25
 
 /* Contraseña ADMIN */
-/* #!RivetAdmin2626Secure!'*/
+/* #!RivetAdmin2626Secure!*/
 
 /* HASH de la contraseña */
 /* $2y$12$fjwitv/crb84yOVziRRRTuCDcqv7DlmDCcEK9aaFO07NvQPFV0Co6 */
