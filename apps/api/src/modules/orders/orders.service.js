@@ -32,6 +32,7 @@ const formatOrder = (order) => ({
   discount_cents: undefined,
   shipping_cents: undefined,
   total_cents: undefined,
+  payments: undefined, //Laravel no devuelve payments en formatOrder; su id en BigInt rompe el JSON
   order_items: order.order_items?.map((item) => ({
     ...item,
     id: String(item.id),

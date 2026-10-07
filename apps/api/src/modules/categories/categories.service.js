@@ -1,5 +1,7 @@
 import { prisma } from "../../lib/prisma.js";
 
+const centsToEuros = (cents) => parseFloat((cents / 100).toFixed(2));
+
 const formatCategory =(category) => ({
     ...category,
     id: String(category.id),
@@ -17,17 +19,47 @@ const getCategoryBySlug = async (slug) => {
     const category = await prisma.categories.findUnique({
         where: { slug },
         include: {
+            //status y deleted_at son del producto, no de la tabla pivote: filtramos a mano abajo
             product_categories: {
-                where: { status: "PUBLISHED" },
                 include: {
-                    product_images: { where: { is_primary: true } },
-                }
-            }
-        }
+                    products: {
+                        include: {
+                            product_images: { where: { is_primary: true } },
+                        },
+                    },
+                },
+            },
+        },
     });
 
     if(!category) return null;
-    return formatCategory(category);
+
+    const data = formatCategory(category);
+
+    data.product_categories = category.product_categories
+        .filter((pc) => pc.products && pc.products.status === "PUBLISHED" && pc.products.deleted_at === null)
+        .map((pc) => ({
+            product_id: String(pc.product_id),
+            category_id: String(pc.category_id),
+            products: {
+                id: String(pc.products.id),
+                name: pc.products.name,
+                slug: pc.products.slug,
+                short_description: pc.products.short_description,
+                price: centsToEuros(pc.products.price_cents),
+                status: pc.products.status,
+                is_featured: pc.products.is_featured,
+                created_at: pc.products.created_at,
+                product_images: pc.products.product_images.map((img) => ({
+                    id: String(img.id),
+                    url: img.url,
+                    alt_text: img.alt_text,
+                    is_primary: img.is_primary,
+                })),
+            },
+        }));
+
+    return data;
 };
 
 const createCategory = async ({ name, slug, description, sort_order }) => {
