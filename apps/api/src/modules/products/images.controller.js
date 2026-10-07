@@ -6,20 +6,23 @@ const uploadProductImage = async (req, res) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const { alt_text, is_primary } = req.body;
+    const { alt_text, is_primary, variant_id } = req.body;
 
     const isPrimary = is_primary === "true" || is_primary === true;
 
     const image = await imagesService.uploadProductImage(
       req.params.id,
       req.file,
-      { alt_text, is_primary: isPrimary }
+      { alt_text, is_primary: isPrimary, variant_id }
     );
 
     res.status(201).json(image);
   } catch (e) {
     if (e.code === "PRODUCT_NOT_FOUND") {
       return res.status(404).json({ error: "Product not found" });
+    }
+    if (e.code === "VARIANT_NOT_FOUND") {
+      return res.status(404).json({ error: "Variant not found" });
     }
     console.error(e);
     res.status(500).json({ error: "Internal server error" });

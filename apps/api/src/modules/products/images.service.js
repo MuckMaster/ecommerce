@@ -9,13 +9,13 @@ const formatImage = (image) => ({
     product_id: String(image.product_id),
     variant_id: image.variant_id ? String(image.variant_id) : null,
     url: image.url,
-    alt_text: image.sort_order,
+    alt_text: image.alt_text,
     sort_order: image.sort_order,
     is_primary: image.is_primary,
     created_at: image.created_at,
 });
 
-const uploadProductImage = async (productId, file, { alt_text, is_primary } = {}) => {
+const uploadProductImage = async (productId, file, { alt_text, is_primary, variant_id } = {}) => {
     const product = await prisma.products.findUnique({
         where: { id: BigInt(productId) }
     });
@@ -27,15 +27,34 @@ const uploadProductImage = async (productId, file, { alt_text, is_primary } = {}
         throw error;
     }
 
+    //si llega variant_id, la variante tiene que existir y ser de este producto
+    if (variant_id) {
+        const variant = await prisma.product_variants.findFirst({
+            where: { id: BigInt(variant_id), product_id: BigInt(productId) },
+        });
+
+        if (!variant) {
+            fs.unlinkSync(file.path);
+            const error = new Error("Variant not found");
+            error.code = "VARIANT_NOT_FOUND";
+            throw error;
+        }
+    }
+
+    //is_primary y sort_order se calculan dentro del mismo grupo: la variante indicada, o las imagenes sin variante
+    const groupWhere = variant_id
+        ? { product_id: BigInt(productId), variant_id: BigInt(variant_id) }
+        : { product_id: BigInt(productId), variant_id: null };
+
     if (is_primary) {
         await prisma.product_images.updateMany({
-            where: { product_id: BigInt(productId), is_primary: true },
+            where: { ...groupWhere, is_primary: true },
             data: { is_primary: false },
         });
     }
 
     const lastImage = await prisma.product_images.findFirst({
-        where: { product_id: BigInt(productId) },
+        where: groupWhere,
         orderBy: { sort_order: "desc" },
     });
 
@@ -44,6 +63,7 @@ const uploadProductImage = async (productId, file, { alt_text, is_primary } = {}
     const image = await prisma.product_images.create({
         data: {
         product_id: BigInt(productId),
+        variant_id: variant_id ? BigInt(variant_id) : null,
         url: getPublicUrl(file.filename),
         alt_text: alt_text || product.name,
         sort_order: sortOrder,
