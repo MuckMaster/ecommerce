@@ -14,6 +14,9 @@ const productVariantsRoutes = Router({ mergeParams: true });
 
 productVariantsRoutes.get("/", getVariantsByProduct);
 productVariantsRoutes.post("/", authMiddleware, requireRole("ADMIN"), createVariant);
+//el frontend edita y borra variantes con el producto en la URL, como en Laravel
+productVariantsRoutes.put("/:variantId", authMiddleware, requireRole("ADMIN"), updateVariant);
+productVariantsRoutes.delete("/:variantId", authMiddleware, requireRole("ADMIN"), deleteVariant);
 
 // Router separado para acciones directas sobre variantes (sin el producto en la URL)
 const variantsRoutes = Router();

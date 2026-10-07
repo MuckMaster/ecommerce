@@ -15,7 +15,7 @@ categoriesRoutes.get("/", getCategories);
 categoriesRoutes.get("/:slug", getCategoryBySlug);
 
 categoriesRoutes.post("/", authMiddleware, requireRole("ADMIN"), createCategory);
-categoriesRoutes.put("/;id", authMiddleware, requireRole("ADMIN"), updateCategory);
+categoriesRoutes.put("/:id", authMiddleware, requireRole("ADMIN"), updateCategory);
 categoriesRoutes.delete("/:id", authMiddleware, requireRole("ADMIN"), deleteCategory);
 
 export { categoriesRoutes };
