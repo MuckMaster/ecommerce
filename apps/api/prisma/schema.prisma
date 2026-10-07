@@ -253,6 +253,7 @@ model products {
   currency           String               @default("EUR") @db.Char(3)
   status             products_status      @default(DRAFT)
   material           String?              @db.VarChar(100)
+  care               String?              @db.Text
   is_featured        Boolean              @default(false)
   created_at         DateTime             @default(now()) @db.DateTime(0)
   updated_at         DateTime             @default(now()) @db.DateTime(0)

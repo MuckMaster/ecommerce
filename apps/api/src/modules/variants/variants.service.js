@@ -123,4 +123,4 @@ const deleteVariant = async (variantId) => {
   });
 };
 
-export { getVariantsByProduct, createVariant, updateVariant, deleteVariant };
+export { getVariantsByProduct, createVariant, updateVariant, deleteVariant, resolveColorCss };
