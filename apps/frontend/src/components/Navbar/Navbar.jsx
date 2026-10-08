@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import './Navbar.css'
 import { useEffect, useState, useRef } from 'react'
 import { useAuth } from '../../context/AuthContext'
@@ -11,6 +11,7 @@ import { API_URL } from '../../config'
 // Se oculta al bajar, muestra el contador del carrito y genera
 // el desplegable de categorías a partir de la API.
 function Navbar({ onAuthOpen }) {
+    const location = useLocation()
     const navigate = useNavigate()
     const { user } = useAuth()
 
@@ -86,6 +87,14 @@ function Navbar({ onAuthOpen }) {
         }
         fetchCategories()
     }, [])
+
+    // Cierra el menú móvil y el dropdown cada vez que cambia la ruta.
+    // React Router no desmonta la Navbar al navegar, así que hay que
+    // cerrarlos manualmente o se quedarían abiertos al cambiar de página.
+    useEffect(() => {
+        setMenuOpen(false)
+        setDropdownOpen(false)
+    }, [location.pathname])
 
     return (
         <header className={`navbar ${hidden ? 'navbar-hidden' : ''}`}>

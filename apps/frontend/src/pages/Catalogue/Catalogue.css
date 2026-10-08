@@ -47,32 +47,32 @@
     min-width: 250px;
 }
 
-/* ── Responsive ────────────────────────────────────────────────────
-   De 4 columnas a 2 en tablet y móvil, quitando el padding lateral
-   para aprovechar todo el ancho de pantalla. */
-@media (max-width: 1024px) {
-    .catalogue__grid {
-        padding: 0px;
-    }
-    .catalogue__grid > * {
-        flex: 0 1 calc(50% - 10px);   /* 2 por fila en tablet */
-    }
-    .catalogue__header {
-        padding: 20px 24px;
-    }
-}
-
+/* Cuando la pantalla mide 640px o menos (móvil) */
 @media (max-width: 640px) {
+
     .catalogue__grid {
-        padding: 0px;
+        padding: 0px;        /* sin margen lateral, aprovecha todo el ancho */
     }
+
+    /* "> *" significa: cada tarjeta hija directa del grid */
     .catalogue__grid > * {
-        flex: 0 1 calc(50% - 10px);   /* 2 por fila en móvil */
-        min-width: 0;                  /* anula el min-width de 250px para que quepan 2 */
+        /* flex: crecer(0) encoger(1) tamaño-base(calc)
+           - 0    = no crece (no se estira de más)
+           - 1    = sí puede encoger si hace falta
+           - 50%  = quiero que mida media fila (= 2 por fila)
+           - 5px  = le quito un poco para dejar sitio al hueco entre tarjetas */
+        flex: 0 1 calc(50% - 5px);
+
+        /* min-width 0 = sin ancho mínimo, puede encogerse lo que haga falta.
+           IMPRESCINDIBLE: si fuera 250px, dos tarjetas no cabrían en un
+           móvil estrecho y bajaría a 1 por fila. */
+        min-width: 0;
     }
+
     .catalogue__header {
         padding: 20px 12px;
     }
+
     .catalogue__title {
         font-size: 1.6rem;
     }

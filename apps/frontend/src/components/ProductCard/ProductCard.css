@@ -72,3 +72,13 @@
   opacity: 1;
 }
 */
+
+
+/* En móvil quitamos el margin de la tarjeta: aquí la separación la da
+   el gap del grid, y el margin extra descuadraría el cálculo del flex
+   (haría que no cupieran 2 por fila). */
+@media (max-width: 640px) {
+    .product-card {
+        margin: 0;
+    }
+}
