@@ -19,31 +19,6 @@ services:
       timeout: 5s
       retries: 10
 
-  laravel-consumer:
-    build:
-      context: ../../services/laravel-consumer
-      dockerfile: Dockerfile
-    container_name: ecommerce_bolsos_laravel_consumer
-    working_dir: /var/www
-    volumes:
-      - ../../services/laravel-consumer:/var/www
-      - /var/www/vendor
-    environment:
-      APP_ENV: local
-      DB_CONNECTION: mysql
-      DB_HOST: mysql         
-      DB_PORT: 3306
-      DB_DATABASE: ecommerce_bolsos
-      DB_USERNAME: "1234"
-      DB_PASSWORD: "1234"
-    ports:
-      - "8000:8000"
-    depends_on:
-      mysql:
-        condition: service_healthy
-    networks:
-      - ecommerce_net
-
   api:
     build:
       context: ../../apps/api

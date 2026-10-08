@@ -1,10 +1,10 @@
 // import.meta.env.VITE_API_URL lo defines al compilar para producción;
 // si no existe (desarrollo), usa tu Laravel local de siempre
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 // URL base para archivos estáticos (imágenes): SIN /index.php,
 // porque son archivos que sirve Apache directamente, no pasan por Laravel.
-export const ASSET_URL = import.meta.env.VITE_ASSET_URL || 'http://localhost:8000'
+export const ASSET_URL = import.meta.env.VITE_ASSET_URL || 'http://localhost:3000'
 
 // Helper para construir la URL completa de una imagen.
 // Las imágenes vienen como rutas relativas (/uploads/products/...)
