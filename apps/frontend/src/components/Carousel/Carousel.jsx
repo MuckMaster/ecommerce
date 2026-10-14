@@ -18,8 +18,8 @@ function Carousel({ images }) {
                     <div key={i} className="carousel__slide">
                         <img 
                         src={src}
-                         alt={i > images.lenght ? `Imagen ${i+1} ${STORE_NAME}` : ''}
-                         aria-hidden={i >= images.lenght}
+                         alt={i < images.length ? `Imagen ${i+1} ${STORE_NAME}` : ''}
+                         aria-hidden={i >= images.length}
                          />
                     </div>
                 ))}
