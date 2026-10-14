@@ -118,3 +118,11 @@ Pendiente para más adelante:
 
 \- Despliegue con Nginx/Caddy delante de Node: se hace con la primera variante (concept-commerce).
 
+\- Migración 011 que borre de la base de desarrollo las 8 tablas que dejó Laravel (`cache`, `cache\_locks`, `failed\_jobs`, `job\_batches`, `jobs`, `migrations`, `password\_reset\_tokens`, `sessions`), seguida de `prisma db pull`, para que el esquema se pueda reconstruir solo con las migraciones.
+
+\- Borrar periódicamente las sesiones caducadas de `user\_sessions` (hoy solo se borran si alguien intenta usarlas).
+
+\- Quitar el `console.log("WEBHOOK HIT…")` de depuración de `app.js`.
+
+\- Aviso de seguridad en `body-parser` (va con Express): revisar npm audit y actualizar dependencias (Express incluido) antes del tag base-node-v2 del paso 4.
+
