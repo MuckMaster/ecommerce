@@ -1,6 +1,7 @@
 
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import { authRoutes } from "./modules/auth/auth.routes.js"
 import { productsRoutes } from "./modules/products/products.routes.js";
 import { categoriesRoutes } from "./modules/categories/categories.routes.js";
@@ -12,6 +13,12 @@ import { variantsRoutes } from "./modules/variants/variants.routes.js";
 import { adminOrdersRoutes } from "./modules/admin/orders/admin-orders.routes.js";
 
 const app = express();
+
+// Cabeceras de seguridad en todas las respuestas (también las del webhook y las imágenes de /uploads),
+// por eso va lo primero. Entre otras: quita X-Powered-By (no anunciar que es Express),
+// X-Content-Type-Options: nosniff (el navegador no "adivina" el tipo de un archivo)
+// y Cross-Origin-Resource-Policy: same-origin (otras webs no pueden incrustar nuestras imágenes).
+app.use(helmet());
 
 // Disclaimer: El webhook de stripe esta registrado aquí y no en orders.routes.js ya que Stripe necesita el body sin parsear (raw) para confirmar la firma de seguridad.
 // En caso de estar en router, express.json() procesa el body antes y la confirmacion de la firma falla.
