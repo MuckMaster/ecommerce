@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_in_prod";
+import { JWT_SECRET } from "../config/security.js";
 
 const authMiddleware = (req, res, next) => {
 

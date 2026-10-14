@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { prisma } from "../../lib/prisma.js";
 import { mergeCart } from "../cart/cart.service.js";
+import { JWT_SECRET } from "../../config/security.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_in_prod";
 const ACCES_TOKEN_TTL = "15m";
 const REFRESH_TOKEN_TTL_DAYS = 30;
 

@@ -24,6 +24,12 @@ if (!isTestDatabaseUrl(process.env.DATABASE_URL)) {
 // Se pone siempre una falsa para que ningún test pueda llamar a Stripe de verdad.
 process.env.STRIPE_SECRET_KEY = "sk_test_dummy_for_tests";
 
+// --- 3. JWT ---
+// La API no arranca sin JWT_SECRET (src/config/security.js). Los tests usan una clave
+// fija y propia para no depender de la de .env.docker ni dejarla en ningún token de prueba.
+// Tiene que cumplir el mínimo de 32 caracteres.
+process.env.JWT_SECRET = "jwt_secret_only_for_tests_with_more_than_32_chars";
+
 // Prisma se importa después de cambiar DATABASE_URL (por eso con import dinámico:
 // un import normal se ejecutaría antes que el código de arriba).
 const { prisma } = await import("../src/lib/prisma.js");
