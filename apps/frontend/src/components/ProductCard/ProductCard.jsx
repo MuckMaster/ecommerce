@@ -13,7 +13,7 @@ function ProductCard({ product }) {
     product.product_images?.find(img => img.is_primary) ||
     product.product_images?.[0]
 
-  // La API devuelve rutas relativas; imageUrl las completa con ASSET_URL.
+  // La API devuelve rutas relativas; imageUrl las completa con API_URL.
   const thumbnail = primaryImage ? imageUrl(primaryImage.url) : ''
 
   return (
