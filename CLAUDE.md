@@ -86,7 +86,11 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
 \## Frontend
 
-\- `src/config.js` centraliza `API\_URL` y `ASSET\_URL` (por defecto `http://localhost:3000`).
+\- `src/config.js` centraliza `API\_URL` (de `VITE\_API\_URL`, opcional). Vacía por defecto: el frontend pide rutas relativas (`/api`, `/uploads`) al mismo dominio. `imageUrl()` también usa `API\_URL`, porque la API sirve `/uploads`.
+
+\- En local, el proxy de `vite.config.js` reenvía `/api` y `/uploads` a `localhost:3000`, tanto con `npm run dev` como con `npm run preview` (preview usa `server.proxy` si no se define `preview.proxy`).
+
+\- En producción hace falta un servidor web (Nginx/Caddy) que sirva el frontend y reenvíe `/api` y `/uploads` a la API. Ver "Despliegue" en "Pendiente para más adelante".
 
 \- La marca también sale de `src/config.js`: `STORE\_NAME` y `STORE\_EMAIL` (de `VITE\_STORE\_NAME` y `VITE\_STORE\_EMAIL`). El `<title>` de `index.html` usa `%VITE\_STORE\_NAME%`. Logo en `public/images/logo/logo.png` y favicon en `public/images/logo/favicon.png`: cada variante cambia los archivos.
 
@@ -98,9 +102,9 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
 \## Plan en curso (actualizar al cerrar cada paso)
 
-1\. ✅ Marca configurable: nombre de la tienda, prefijo de pedido, remitente del correo → variables de entorno.
+1\. Marca configurable: nombre de la tienda, prefijo de pedido, remitente del correo → variables de entorno. (hecho)
 
-2\. API en el mismo dominio que el frontend: rutas relativas (`/api`, `/uploads`) y proxy de Vite en local.
+2\. API en el mismo dominio que el frontend: rutas relativas (`/api`, `/uploads`) y proxy de Vite en local. (hecho)
 
 3\. Seguridad: límite de intentos en el login, CORS por variable de entorno, JWT\_SECRET obligatorio, helmet, refresh token en cookie httpOnly, admin cargado con React.lazy. Empezar montando tests con Vitest y Supertest.
 
@@ -111,4 +115,6 @@ Pendiente para más adelante:
 \- Quitar "Bolsos de" de `Navbar.jsx:179` al hacer la variante genérica.
 
 \- Borrar los logos duplicados: `public/logo\_rivet.png` y `public/images/logo/logo\_rivet copy.png`.
+
+\- Despliegue con Nginx/Caddy delante de Node: se hace con la primera variante (concept-commerce).
 
