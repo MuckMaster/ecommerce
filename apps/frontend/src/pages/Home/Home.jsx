@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import ProductCard from '../../components/ProductCard/ProductCard'
-import { API_URL } from '../../config'
+import { API_URL, STORE_NAME } from '../../config'
 import './Home.css'
 
 // Portada: imagen principal y rejilla de productos destacados.
@@ -34,7 +34,7 @@ function Home() {
       <section className="home__hero" aria-label="Imagen principal">
         <img
           src="../images/home/home.jpg"
-          alt="Rivet Bags"
+          alt={STORE_NAME}
           className="home__hero-img"
         />
       </section>

@@ -6,6 +6,13 @@ export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 // porque son archivos que sirve Apache directamente, no pasan por Laravel.
 export const ASSET_URL = import.meta.env.VITE_ASSET_URL || 'http://localhost:3000'
 
+// Datos de marca: cada variante de la tienda los cambia en su .env sin tocar componentes.
+// Ojo: todo lo VITE_ acaba dentro del JavaScript que descarga el navegador, así que es público.
+export const STORE_NAME = import.meta.env.VITE_STORE_NAME || 'Mi Tienda'
+
+// Correo de contacto que se enseña al cliente (no es al que llegan los mensajes del formulario)
+export const STORE_EMAIL = import.meta.env.VITE_STORE_EMAIL || 'info@mitienda.com'
+
 // Helper para construir la URL completa de una imagen.
 // Las imágenes vienen como rutas relativas (/uploads/products/...)
 // y hay que concatenarlas con la URL base de la API.

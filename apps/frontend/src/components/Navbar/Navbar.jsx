@@ -3,7 +3,7 @@ import './Navbar.css'
 import { useEffect, useState, useRef } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
-import { API_URL } from '../../config'
+import { API_URL, STORE_NAME } from '../../config'
 
 
 
@@ -106,7 +106,7 @@ function Navbar({ onAuthOpen }) {
                     setMenuOpen(false)}}
                 aria-label="Ir al inicio"
             >
-                <img src="/images/logo/logo_rivet_sinfondo.png" alt="Rivet Bags" className="navbar__logo-img" />
+                <img src="/images/logo/logo.png" alt={STORE_NAME} className="navbar__logo-img" />
             </button>
 
             

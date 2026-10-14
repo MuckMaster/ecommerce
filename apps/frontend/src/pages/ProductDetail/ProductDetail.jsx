@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useParams, useNavigate } from 'react-router-dom'
 import Accordion from '../../components/Accordion/Accordion'
 import { useCart } from '../../context/CartContext'
-import { API_URL, imageUrl, formatPrice } from '../../config'
+import { API_URL, imageUrl, formatPrice, STORE_EMAIL } from '../../config'
 import './ProductDetail.css'
 
 // Ficha de producto: galería con swatches de color, precio, descripción,
@@ -296,7 +296,7 @@ function ProductDetail() {
               onToggle={() => toggleAccordion('Contacto')}
               containerRef={infoRef}
             >
-              ¿Tienes alguna duda? Escríbenos a comercial@rivetbag.com
+              ¿Tienes alguna duda? Escríbenos a {STORE_EMAIL}
             </Accordion>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import './Carousel.css'
+import { STORE_NAME } from '../../config'
 
 // Carrusel de desplazamiento continuo. La animación la hace el CSS
 // sobre .carousel__track; aquí solo se prepara la lista de imágenes.
@@ -17,7 +18,7 @@ function Carousel({ images }) {
                     <div key={i} className="carousel__slide">
                         <img 
                         src={src}
-                         alt={i > images.lenght ? `Imagen ${i+1} NivetBags` : ''}
+                         alt={i > images.lenght ? `Imagen ${i+1} ${STORE_NAME}` : ''}
                          aria-hidden={i >= images.lenght}
                          />
                     </div>
