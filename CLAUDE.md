@@ -68,6 +68,8 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
 \- `app.js` (la app) está separado de `server.js` (arranca el servidor). Mantenerlo así: los tests importan `app` directamente.
 
+\- Marca de la tienda en `src/config/brand.js` (`STORE\_NAME`, `ORDER\_PREFIX`). El resto del código no lee esas variables de `process.env`: las importa de ahí.
+
 
 
 \## Base de datos y Prisma
@@ -86,6 +88,8 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
 \- `src/config.js` centraliza `API\_URL` y `ASSET\_URL` (por defecto `http://localhost:3000`).
 
+\- La marca también sale de `src/config.js`: `STORE\_NAME` y `STORE\_EMAIL` (de `VITE\_STORE\_NAME` y `VITE\_STORE\_EMAIL`). El `<title>` de `index.html` usa `%VITE\_STORE\_NAME%`. Logo en `public/images/logo/logo.png` y favicon en `public/images/logo/favicon.png`: cada variante cambia los archivos.
+
 \- El access token vive en memoria; en localStorage están `user`, `refreshToken` y `sessionId`.
 
 \- CSS con BEM: `bloque\_\_elemento--modificador`.
@@ -94,11 +98,17 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
 \## Plan en curso (actualizar al cerrar cada paso)
 
-1\. Marca configurable: nombre de la tienda, prefijo de pedido, remitente del correo → variables de entorno.
+1\. ✅ Marca configurable: nombre de la tienda, prefijo de pedido, remitente del correo → variables de entorno.
 
 2\. API en el mismo dominio que el frontend: rutas relativas (`/api`, `/uploads`) y proxy de Vite en local.
 
 3\. Seguridad: límite de intentos en el login, CORS por variable de entorno, JWT\_SECRET obligatorio, helmet, refresh token en cookie httpOnly, admin cargado con React.lazy. Empezar montando tests con Vitest y Supertest.
 
 4\. Tag `base-node-v2` y crear la variante `concept-commerce`.
+
+Pendiente para más adelante:
+
+\- Quitar "Bolsos de" de `Navbar.jsx:179` al hacer la variante genérica.
+
+\- Borrar los logos duplicados: `public/logo\_rivet.png` y `public/images/logo/logo\_rivet copy.png`.
 
