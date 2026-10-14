@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { prisma } from "../../lib/prisma.js";
 import crypto from "crypto";
+import { ORDER_PREFIX } from "../../config/brand.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -17,7 +18,7 @@ const calculateShipping = (subtotalCents) => {
 const generateOrderNumber = () => {
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   const random = crypto.randomBytes(3).toString("hex").toUpperCase();
-  return `NB-${date}-${random}`;
+  return `${ORDER_PREFIX}-${date}-${random}`;
 };
 
 const formatOrder = (order) => ({

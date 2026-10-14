@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma.js";
 import nodemailer from "nodemailer";
+import { STORE_NAME } from "../../config/brand.js";
 
 const transporter = nodemailer.createTransport({
     host:process.env.SMTP_HOST,
@@ -17,7 +18,7 @@ const sendContactMessage = async ({ name, email, phone, message }) => {
     });
 
     await transporter.sendMail({
-        from: `"Rivet Bags Web" <${process.env.SMTP_USER}>`,
+        from: `"${STORE_NAME} Web" <${process.env.SMTP_USER}>`,
         to: process.env.CONTACT_EMAIL,
         subject: `Nuevo mensaje de contacto de ${name}`,
         html: `
