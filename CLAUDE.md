@@ -114,7 +114,7 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
    \- B3. helmet. (hecho)
 
-   \- B4. CORS con `CORS\_ORIGINS`: lista separada por comas; vacía = sin CORS.
+   \- B4. CORS con `CORS\_ORIGINS`: lista separada por comas; vacía = sin CORS. Si tiene orígenes, helmet pasa Cross-Origin-Resource-Policy a `cross-origin` para que el frontend cargue las imágenes de `/uploads`. (hecho)
 
    \- B5. express-rate-limit, con 429 `{ "error": "..." }`. Login: 10 fallos cada 15 min por IP, contando solo los fallos. Register y contact: 5 por hora por IP, contando todas. `TRUST\_PROXY` desactivado por defecto.
 
