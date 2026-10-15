@@ -106,7 +106,27 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
 2\. API en el mismo dominio que el frontend: rutas relativas (`/api`, `/uploads`) y proxy de Vite en local. (hecho)
 
-3\. Seguridad: límite de intentos en el login, CORS por variable de entorno, JWT\_SECRET obligatorio, helmet, refresh token en cookie httpOnly, admin cargado con React.lazy. Empezar montando tests con Vitest y Supertest.
+3\. Seguridad: límite de intentos en el login, CORS por variable de entorno, JWT\_SECRET obligatorio, helmet, refresh token en cookie httpOnly, admin cargado con React.lazy. Empezar montando tests con Vitest y Supertest. En bloques:
+
+   \- B1. Vitest y Supertest con base de datos de tests. (hecho)
+
+   \- B2. JWT\_SECRET obligatorio, mínimo 32 caracteres, en `src/config/security.js`. (hecho)
+
+   \- B3. helmet. (hecho)
+
+   \- B4. CORS con `CORS\_ORIGINS`: lista separada por comas; vacía = sin CORS.
+
+   \- B5. express-rate-limit, con 429 `{ "error": "..." }`. Login: 10 fallos cada 15 min por IP, contando solo los fallos. Register y contact: 5 por hora por IP, contando todas. `TRUST\_PROXY` desactivado por defecto.
+
+   \- B6. Refresh token en cookie httpOnly (cookie-parser), con rotación. `NODE\_ENV=production` activa `Secure`. Frontend: borrar la clave vieja `refreshToken` de localStorage y arreglar el `headers` duplicado de `logout()` en `AuthContext.jsx`.
+
+   \- B7. Admin con React.lazy. Medir el build antes y después (hoy un único JS de 431 KB).
+
+   \- B8. `.env.example` con `CORS\_ORIGINS`, `TRUST\_PROXY`, `NODE\_ENV` y lo nuevo. Marcar el paso 3 como hecho.
+
+   \- Tests: `docker exec ecommerce\_bolsos\_api npm test`, contra la base `ecommerce\_bolsos\_test` (el setup aborta si el nombre no acaba en `\_test`).
+
+   \- Dependencias: instalar en cada bloque solo la suya y reconstruir la imagen. Si `npm install` de npm 10 falla (`edgesOut`), usar `npx -y npm@11 install ...`.
 
 4\. Tag `base-node-v2` y crear la variante `concept-commerce`.
 
