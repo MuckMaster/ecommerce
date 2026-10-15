@@ -35,9 +35,16 @@ process.env.JWT_SECRET = "jwt_secret_only_for_tests_with_more_than_32_chars";
 // aunque .env.docker tenga CORS_ORIGINS. Los tests de CORS ponen su propia lista.
 process.env.CORS_ORIGINS = "";
 
+// --- 5. Proxy ---
+// Sin proxy delante, como la API en local, aunque .env.docker tenga TRUST_PROXY.
+process.env.TRUST_PROXY = "";
+
 // Prisma se importa después de cambiar DATABASE_URL (por eso con import dinámico:
 // un import normal se ejecutaría antes que el código de arriba).
 const { prisma } = await import("../src/lib/prisma.js");
+// Los contadores del límite de intentos viven en memoria y todas las peticiones de Supertest
+// llegan desde la misma IP: sin vaciarlos, un test heredaría los intentos que gastó el anterior.
+const { resetRateLimits } = await import("../src/middlewares/rateLimit.middleware.js");
 
 // Vacía todas las tablas de la base de tests para que cada test empiece desde cero
 // y no dependa de lo que dejó el anterior.
@@ -67,6 +74,7 @@ const cleanDatabase = async () => {
 
 beforeEach(async () => {
     await cleanDatabase();
+    await resetRateLimits();
 });
 
 afterAll(async () => {

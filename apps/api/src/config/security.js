@@ -1,5 +1,5 @@
 // Configuración de seguridad de la API.
-// Es el único sitio que lee JWT_SECRET y CORS_ORIGINS: el resto del código los importa de aquí.
+// Es el único sitio que lee JWT_SECRET, CORS_ORIGINS y TRUST_PROXY: el resto del código los importa de aquí.
 
 // Una clave corta se puede adivinar probando combinaciones; 32 caracteres aleatorios ya no.
 const MIN_JWT_SECRET_LENGTH = 32;
@@ -67,4 +67,24 @@ const parseCorsOrigins = (value) => {
 // También se comprueba al arrancar: un origen mal escrito para la API con un mensaje claro.
 export const CORS_ORIGINS = parseCorsOrigins(process.env.CORS_ORIGINS);
 
-export { requireJwtSecret, parseCorsOrigins };
+// Convierte TRUST_PROXY en el valor de app.set("trust proxy"): cuántos proxies (Nginx, Caddy...)
+// hay delante de la API. Vacía devuelve false: Express usa la IP de la conexión y no mira X-Forwarded-For.
+// Por defecto desactivado a propósito: sin proxy, X-Forwarded-For lo escribe el cliente, y quien
+// se la inventara en cada petición tendría una IP distinta y se saltaría el límite de intentos.
+// Con proxy hay que activarlo (normalmente 1), o todos los clientes parecen la IP del proxy
+// y el límite bloquearía a toda la tienda a la vez.
+const parseTrustProxy = (value) => {
+    if (!value || value.trim() === "") {
+        return false;
+    }
+
+    const proxies = Number(value.trim());
+    if (!Number.isInteger(proxies) || proxies < 0) {
+        throw new Error(`TRUST_PROXY tiene que ser el número de proxies delante de la API (normalmente 1), no "${value}".`);
+    }
+    return proxies;
+};
+
+export const TRUST_PROXY = parseTrustProxy(process.env.TRUST_PROXY);
+
+export { requireJwtSecret, parseCorsOrigins, parseTrustProxy };

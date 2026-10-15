@@ -116,13 +116,13 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
    \- B4. CORS con `CORS\_ORIGINS`: lista separada por comas; vacía = sin CORS. Si tiene orígenes, helmet pasa Cross-Origin-Resource-Policy a `cross-origin` para que el frontend cargue las imágenes de `/uploads`. (hecho)
 
-   \- B5. express-rate-limit, con 429 `{ "error": "..." }`. Login: 10 fallos cada 15 min por IP, contando solo los fallos. Register y contact: 5 por hora por IP, contando todas. `TRUST\_PROXY` desactivado por defecto.
+   \- B5. express-rate-limit, con 429 `{ "error": "..." }`. Login: 10 fallos cada 15 min por IP, contando solo los fallos. Register y contact: 5 por hora por IP, contando todas. `TRUST\_PROXY` desactivado por defecto. Límites en `src/middlewares/rateLimit.middleware.js`, en memoria; en el login solo cuenta el 401. `setup.js` los pone a cero antes de cada test. (hecho)
 
    \- B6. Refresh token en cookie httpOnly (cookie-parser), con rotación. `NODE\_ENV=production` activa `Secure`. Frontend: borrar la clave vieja `refreshToken` de localStorage y arreglar el `headers` duplicado de `logout()` en `AuthContext.jsx`.
 
    \- B7. Admin con React.lazy. Medir el build antes y después (hoy un único JS de 431 KB).
 
-   \- B8. `.env.example` con `CORS\_ORIGINS`, `TRUST\_PROXY`, `NODE\_ENV` y lo nuevo. Marcar el paso 3 como hecho.
+   \- B8. `.env.example` con `CORS\_ORIGINS`, `TRUST\_PROXY`, `NODE\_ENV` y lo nuevo. El comentario de `TRUST\_PROXY` tiene que avisar de que, detrás de Nginx/Caddy sin `TRUST\_PROXY=1`, todos los clientes comparten la IP del proxy y el mismo contador, y un atacante bloquearía el login de todos. Marcar el paso 3 como hecho.
 
    \- Tests: `docker exec ecommerce\_bolsos\_api npm test`, contra la base `ecommerce\_bolsos\_test` (el setup aborta si el nombre no acaba en `\_test`).
 

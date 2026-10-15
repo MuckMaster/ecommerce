@@ -2,7 +2,7 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import { CORS_ORIGINS } from "./config/security.js";
+import { CORS_ORIGINS, TRUST_PROXY } from "./config/security.js";
 import { authRoutes } from "./modules/auth/auth.routes.js"
 import { productsRoutes } from "./modules/products/products.routes.js";
 import { categoriesRoutes } from "./modules/categories/categories.routes.js";
@@ -14,6 +14,10 @@ import { variantsRoutes } from "./modules/variants/variants.routes.js";
 import { adminOrdersRoutes } from "./modules/admin/orders/admin-orders.routes.js";
 
 const app = express();
+
+// De qué IP viene cada petición (req.ip), que es lo que cuenta el límite de intentos.
+// Ver parseTrustProxy en config/security.js: desactivado salvo que haya un proxy delante.
+app.set("trust proxy", TRUST_PROXY);
 
 // Cabeceras de seguridad en todas las respuestas (también las del webhook y las imágenes de /uploads),
 // por eso va lo primero. Entre otras: quita X-Powered-By (no anunciar que es Express),
