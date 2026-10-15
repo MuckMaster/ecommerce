@@ -1,5 +1,5 @@
 // Configuración de seguridad de la API.
-// Es el único sitio que lee JWT_SECRET: el resto del código lo importa de aquí.
+// Es el único sitio que lee JWT_SECRET y CORS_ORIGINS: el resto del código los importa de aquí.
 
 // Una clave corta se puede adivinar probando combinaciones; 32 caracteres aleatorios ya no.
 const MIN_JWT_SECRET_LENGTH = 32;
@@ -27,4 +27,44 @@ const requireJwtSecret = (value) => {
 // al principio con un mensaje claro que funcionar con una clave insegura.
 export const JWT_SECRET = requireJwtSecret(process.env.JWT_SECRET);
 
-export { requireJwtSecret };
+// Convierte CORS_ORIGINS ("https://a.com, https://b.com") en una lista de orígenes.
+// Vacía o sin definir devuelve una lista vacía, que significa "sin CORS": es lo normal,
+// porque el frontend y la API van en el mismo dominio y el navegador no necesita permiso.
+// Cada origen se valida porque un error de formato (una "/" al final, una ruta) no avisa:
+// el navegador manda el origen exacto, no coincide con la lista y CORS falla sin explicación.
+const parseCorsOrigins = (value) => {
+    const origins = [];
+    if (!value) {
+        return origins;
+    }
+
+    for (const part of value.split(",")) {
+        const origin = part.trim();
+        if (origin === "") {
+            continue;
+        }
+
+        // new URL() falla si no es una URL, y .origin se queda solo con protocolo, dominio y puerto.
+        // Si al quitarle lo demás ya no es igual, es que traía algo de más.
+        let parsedOrigin;
+        try {
+            parsedOrigin = new URL(origin).origin;
+        } catch {
+            parsedOrigin = null;
+        }
+        if (parsedOrigin !== origin) {
+            throw new Error(
+                `CORS_ORIGINS tiene un origen mal escrito: "${origin}". ` +
+                `Formato: protocolo://dominio[:puerto], sin "/" al final ni ruta (ejemplo: https://tienda.com).`
+            );
+        }
+
+        origins.push(origin);
+    }
+    return origins;
+};
+
+// También se comprueba al arrancar: un origen mal escrito para la API con un mensaje claro.
+export const CORS_ORIGINS = parseCorsOrigins(process.env.CORS_ORIGINS);
+
+export { requireJwtSecret, parseCorsOrigins };

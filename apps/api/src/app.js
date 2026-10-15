@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import { CORS_ORIGINS } from "./config/security.js";
 import { authRoutes } from "./modules/auth/auth.routes.js"
 import { productsRoutes } from "./modules/products/products.routes.js";
 import { categoriesRoutes } from "./modules/categories/categories.routes.js";
@@ -18,7 +19,14 @@ const app = express();
 // por eso va lo primero. Entre otras: quita X-Powered-By (no anunciar que es Express),
 // X-Content-Type-Options: nosniff (el navegador no "adivina" el tipo de un archivo)
 // y Cross-Origin-Resource-Policy: same-origin (otras webs no pueden incrustar nuestras imágenes).
-app.use(helmet());
+// Excepción: si CORS_ORIGINS tiene orígenes, el frontend está en otro dominio y sus <img> de /uploads
+// también son "otra web". Un <img> no pasa por CORS sino por esta cabecera, así que con same-origin
+// el navegador bloquearía las fotos aunque CORS esté bien. En ese caso se relaja a cross-origin.
+if (CORS_ORIGINS.length > 0) {
+    app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
+} else {
+    app.use(helmet());
+}
 
 // Disclaimer: El webhook de stripe esta registrado aquí y no en orders.routes.js ya que Stripe necesita el body sin parsear (raw) para confirmar la firma de seguridad.
 // En caso de estar en router, express.json() procesa el body antes y la confirmacion de la firma falla.
@@ -32,7 +40,13 @@ app.post(
     webhook
 );
 
-app.use(cors());
+// CORS solo si CORS_ORIGINS trae orígenes. Antes era cors() a secas, que responde
+// "Access-Control-Allow-Origin: *": cualquier web podía llamar a la API desde el navegador de un visitante.
+// Con una lista, cors responde con el origen de la petición solo si está en ella; si no, no pone la cabecera
+// y el navegador bloquea la respuesta. Sin la variable no hace falta: el frontend va en el mismo dominio.
+if (CORS_ORIGINS.length > 0) {
+    app.use(cors({ origin: CORS_ORIGINS }));
+}
 app.use(express.json());
 
 app.use("/uploads", express.static("uploads"));

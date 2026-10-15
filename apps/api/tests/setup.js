@@ -30,6 +30,11 @@ process.env.STRIPE_SECRET_KEY = "sk_test_dummy_for_tests";
 // Tiene que cumplir el mínimo de 32 caracteres.
 process.env.JWT_SECRET = "jwt_secret_only_for_tests_with_more_than_32_chars";
 
+// --- 4. CORS ---
+// Por defecto los tests arrancan la app sin CORS, como en producción con el mismo dominio,
+// aunque .env.docker tenga CORS_ORIGINS. Los tests de CORS ponen su propia lista.
+process.env.CORS_ORIGINS = "";
+
 // Prisma se importa después de cambiar DATABASE_URL (por eso con import dinámico:
 // un import normal se ejecutaría antes que el código de arriba).
 const { prisma } = await import("../src/lib/prisma.js");
