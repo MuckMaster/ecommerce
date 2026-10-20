@@ -54,6 +54,8 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
 \- Carrito anónimo con la cabecera `X-Session-Id`; se fusiona con el del usuario al registrarse, no al hacer login.
 
+\- Login y register devuelven `{ user, accessToken }`; el refresh token va en la cookie httpOnly `refreshToken` (`Path=/api/auth`, `SameSite=Strict`, `Secure` con `NODE\_ENV=production`), nunca en el JSON. `/refresh` y `/logout` la leen de la cookie, sin body. Opciones de la cookie en `src/config/security.js`.
+
 
 
 \## Arquitectura de la API
@@ -94,7 +96,9 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
 \- La marca también sale de `src/config.js`: `STORE\_NAME` y `STORE\_EMAIL` (de `VITE\_STORE\_NAME` y `VITE\_STORE\_EMAIL`). El `<title>` de `index.html` usa `%VITE\_STORE\_NAME%`. Logo en `public/images/logo/logo.png` y favicon en `public/images/logo/favicon.png`: cada variante cambia los archivos.
 
-\- El access token vive en memoria; en localStorage están `user`, `refreshToken` y `sessionId`.
+\- El access token vive en memoria y el refresh token en una cookie httpOnly que JavaScript no ve; en localStorage están `user` y `sessionId`. `user` sirve también de pista: sin él no se llama a `/refresh`.
+
+\- En `AuthContext.jsx`, `refresh()` nunca lanza dos peticiones a la vez (con la rotación, la segunda llegaría con la llave gastada). Solo un 401 del refresh desloguea; un error de red o un 5xx devuelve null sin borrar nada.
 
 \- CSS con BEM: `bloque\_\_elemento--modificador`.
 
@@ -118,7 +122,7 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
    \- B5. express-rate-limit, con 429 `{ "error": "..." }`. Login: 10 fallos cada 15 min por IP, contando solo los fallos. Register y contact: 5 por hora por IP, contando todas. `TRUST\_PROXY` desactivado por defecto. Límites en `src/middlewares/rateLimit.middleware.js`, en memoria; en el login solo cuenta el 401. `setup.js` los pone a cero antes de cada test. (hecho)
 
-   \- B6. Refresh token en cookie httpOnly (cookie-parser), con rotación. `NODE\_ENV=production` activa `Secure`. Frontend: borrar la clave vieja `refreshToken` de localStorage y arreglar el `headers` duplicado de `logout()` en `AuthContext.jsx`.
+   \- B6. Refresh token en cookie httpOnly (cookie-parser), con rotación. `NODE\_ENV=production` activa `Secure`. Rotación con `updateMany` condicionado al hash viejo (count 0 → 401). El 401 del refresh no borra la cookie; el logout la borra siempre, también sin cookie o si falla el service. CORS con `credentials: true` y el frontend con `credentials: 'include'`. Frontend: borrar la clave vieja `refreshToken` de localStorage y arreglar el `headers` duplicado de `logout()` en `AuthContext.jsx`.
 
    \- B7. Admin con React.lazy. Medir el build antes y después (hoy un único JS de 431 KB).
 
@@ -141,6 +145,12 @@ Pendiente para más adelante:
 \- Migración 011 que borre de la base de desarrollo las 8 tablas que dejó Laravel (`cache`, `cache\_locks`, `failed\_jobs`, `job\_batches`, `jobs`, `migrations`, `password\_reset\_tokens`, `sessions`), seguida de `prisma db pull`, para que el esquema se pueda reconstruir solo con las migraciones.
 
 \- Borrar periódicamente las sesiones caducadas de `user\_sessions` (hoy solo se borran si alguien intenta usarlas).
+
+\- Refresh token: detección de reutilización. Si llega una llave ya rotada, es que alguien la copió: cerrar todas las sesiones de ese usuario. Necesita guardar las llaves usadas (cambio de esquema).
+
+\- Refresh token: carrera entre pestañas. Dos pestañas que refrescan a la vez comparten cookie; la que pierde recibe 401 y se desloguea en su estado, aunque la otra tenga una llave válida. La deduplicación de `AuthContext.jsx` solo cubre una pestaña (posible solución: BroadcastChannel o Web Locks).
+
+\- Refresh token: tope absoluto de sesión. Cada refresh alarga la sesión 30 días, así que un usuario activo no caduca nunca. No renovar pasado un máximo desde el login (por ejemplo, 90 días). No necesita cambio de esquema: la rotación actualiza la misma fila, así que `created\_at` de `user\_sessions` ya es la fecha del login.
 
 \- Quitar el `console.log("WEBHOOK HIT…")` de depuración de `app.js`.
 
