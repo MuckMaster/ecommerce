@@ -3,10 +3,9 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { prisma } from "../../lib/prisma.js";
 import { mergeCart } from "../cart/cart.service.js";
-import { JWT_SECRET } from "../../config/security.js";
+import { JWT_SECRET, REFRESH_TOKEN_TTL_DAYS } from "../../config/security.js";
 
 const ACCES_TOKEN_TTL = "15m";
-const REFRESH_TOKEN_TTL_DAYS = 30;
 
 //HELPERS
 
@@ -132,8 +131,28 @@ const refresh = async (refreshToken) => {
         throw error;
     }
 
+    // Rotación: cada refresh invalida la llave usada y entrega otra. Si alguien copió la vieja, ya no le sirve.
+    // Se actualiza la misma fila, pero solo si su hash sigue siendo el viejo. Si llegan dos refresh a la vez
+    // con la misma llave, los dos pasan el findFirst de arriba, pero solo el primero encuentra el hash viejo
+    // al actualizar: el segundo ve count 0 y recibe 401. Con un update por id, los dos "ganarían".
+    const newRefreshToken = generateRefreshToken();
+
+    const result = await prisma.user_sessions.updateMany({
+        where: { id: session.id, refresh_token_hash: tokenHash },
+        data: {
+            refresh_token_hash: hashToken(newRefreshToken),
+            expires_at: getExpiresAt(),
+        },
+    });
+
+    if (result.count === 0) {
+        const error = new Error("Invalid or expired refresh token");
+        error.code = "INVALID_REFRESH_TOKEN";
+        throw error;
+    }
+
     const accessToken = generateAccessToken(session.users);
-    return { accessToken };
+    return { accessToken, refreshToken: newRefreshToken };
 };
 
 const logout = async (refreshToken) => {

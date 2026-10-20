@@ -75,6 +75,15 @@ describe("cabeceras CORS en la app", () => {
         expect(res.headers["access-control-allow-origin"]).toBe("https://tienda.com");
         expect(res.headers["access-control-allow-headers"]).toContain("x-session-id");
     });
+
+    it("con CORS_ORIGINS permite credenciales, para que viaje la cookie del refresh token", async () => {
+        const app = await loadAppWithCorsOrigins("https://tienda.com");
+
+        const res = await request(app).get("/uploads/no-existe.jpg").set("Origin", "https://tienda.com");
+
+        // Sin esta cabecera, el navegador descarta la respuesta de un fetch con credentials: 'include'
+        expect(res.headers["access-control-allow-credentials"]).toBe("true");
+    });
 });
 
 // La cabecera Cross-Origin-Resource-Policy de helmet depende de CORS_ORIGINS:

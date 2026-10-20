@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 import { CORS_ORIGINS, TRUST_PROXY } from "./config/security.js";
 import { authRoutes } from "./modules/auth/auth.routes.js"
 import { productsRoutes } from "./modules/products/products.routes.js";
@@ -48,10 +49,14 @@ app.post(
 // "Access-Control-Allow-Origin: *": cualquier web podía llamar a la API desde el navegador de un visitante.
 // Con una lista, cors responde con el origen de la petición solo si está en ella; si no, no pone la cabecera
 // y el navegador bloquea la respuesta. Sin la variable no hace falta: el frontend va en el mismo dominio.
+// credentials: true deja que el navegador envíe y reciba la cookie del refresh token entre orígenes distintos
+// (el frontend, además, tiene que pedir con credentials: 'include').
 if (CORS_ORIGINS.length > 0) {
-    app.use(cors({ origin: CORS_ORIGINS }));
+    app.use(cors({ origin: CORS_ORIGINS, credentials: true }));
 }
 app.use(express.json());
+// Lee la cabecera Cookie y la deja en req.cookies (ahí llega el refresh token)
+app.use(cookieParser());
 
 app.use("/uploads", express.static("uploads"));
 

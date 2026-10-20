@@ -1,5 +1,5 @@
 // Configuración de seguridad de la API.
-// Es el único sitio que lee JWT_SECRET, CORS_ORIGINS y TRUST_PROXY: el resto del código los importa de aquí.
+// Es el único sitio que lee JWT_SECRET, CORS_ORIGINS, TRUST_PROXY y NODE_ENV: el resto del código los importa de aquí.
 
 // Una clave corta se puede adivinar probando combinaciones; 32 caracteres aleatorios ya no.
 const MIN_JWT_SECRET_LENGTH = 32;
@@ -87,4 +87,31 @@ const parseTrustProxy = (value) => {
 
 export const TRUST_PROXY = parseTrustProxy(process.env.TRUST_PROXY);
 
-export { requireJwtSecret, parseCorsOrigins, parseTrustProxy };
+// Días que dura una sesión (el refresh token). Lo usan la base de datos (expires_at)
+// y la cookie (maxAge), así que vive aquí para que las dos duren siempre lo mismo.
+export const REFRESH_TOKEN_TTL_DAYS = 30;
+
+export const REFRESH_COOKIE_NAME = "refreshToken";
+
+// Devuelve las opciones de la cookie del refresh token según el entorno.
+// Recibe NODE_ENV como parámetro (en vez de leerlo dentro) para poder probar los dos casos en los tests.
+// - httpOnly: JavaScript no puede leerla, así un XSS no se lleva la sesión.
+// - secure: solo viaja por HTTPS. Solo en producción, porque en local vamos por http y no se enviaría.
+// - sameSite "strict": el navegador no la envía en peticiones que nacen en otra web (protege de CSRF).
+//   OJO: solo funciona si frontend y API comparten dominio principal (tienda.com y api.tienda.com
+//   valen; tienda.com y otra-api.com no). Con dominios distintos haría falta sameSite "none" + secure,
+//   y entonces habría que protegerse de CSRF de otra forma.
+// - path "/api/auth": solo se envía a login, refresh y logout, no a cada petición de productos o carrito.
+const buildRefreshCookieOptions = (nodeEnv) => {
+    return {
+        httpOnly: true,
+        secure: nodeEnv === "production",
+        sameSite: "strict",
+        path: "/api/auth",
+        maxAge: REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000,
+    };
+};
+
+export const REFRESH_COOKIE_OPTIONS = buildRefreshCookieOptions(process.env.NODE_ENV);
+
+export { requireJwtSecret, parseCorsOrigins, parseTrustProxy, buildRefreshCookieOptions };
