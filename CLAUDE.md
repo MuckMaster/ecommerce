@@ -110,7 +110,7 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
 2\. API en el mismo dominio que el frontend: rutas relativas (`/api`, `/uploads`) y proxy de Vite en local. (hecho)
 
-3\. Seguridad: límite de intentos en el login, CORS por variable de entorno, JWT\_SECRET obligatorio, helmet, refresh token en cookie httpOnly, admin cargado con React.lazy. Empezar montando tests con Vitest y Supertest. En bloques:
+3\. Seguridad: límite de intentos en el login, CORS por variable de entorno, JWT\_SECRET obligatorio, helmet, refresh token en cookie httpOnly, admin cargado con React.lazy. Empezar montando tests con Vitest y Supertest. En bloques: (hecho)
 
    \- B1. Vitest y Supertest con base de datos de tests. (hecho)
 
@@ -126,7 +126,7 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
    \- B7. Admin con React.lazy: `AdminLayout` y las 6 páginas del admin con `lazy()` en `App.jsx`, un chunk por página (sin `manualChunks`). `RequireAdmin` sigue con import normal: como no pinta sus children si no hay ADMIN, un visitante nunca descarga el admin. Dos Suspense: uno en `App.jsx` alrededor de `<Routes>` (primera carga de `AdminLayout`; Navbar y Footer fuera) y otro en `AdminLayout.jsx` solo alrededor de `{children}`, para que la barra lateral no desaparezca al entrar por primera vez en otra página del admin. Fallback `<p>Cargando...</p>` sin clase (`.admin-loading` vive en el CSS del admin). Build: JS principal de 431 KB a 382 KB + 11 KB de `AuthContext` (chunk compartido, se precarga), CSS principal de 37,6 KB a 26,6 KB. Es solo rendimiento: los chunks son públicos y la protección sigue en la API. (hecho)
 
-   \- B8. `.env.example` con `CORS\_ORIGINS`, `TRUST\_PROXY`, `NODE\_ENV` y lo nuevo. El comentario de `TRUST\_PROXY` tiene que avisar de que, detrás de Nginx/Caddy sin `TRUST\_PROXY=1`, todos los clientes comparten la IP del proxy y el mismo contador, y un atacante bloquearía el login de todos. Marcar el paso 3 como hecho.
+   \- B8. `.env.example` con `CORS\_ORIGINS`, `TRUST\_PROXY`, `NODE\_ENV` y lo nuevo. El comentario de `TRUST\_PROXY` tiene que avisar de que, detrás de Nginx/Caddy sin `TRUST\_PROXY=1`, todos los clientes comparten la IP del proxy y el mismo contador, y un atacante bloquearía el login de todos. En la API: `NODE\_ENV`, `CORS\_ORIGINS` y `TRUST\_PROXY` vacías por defecto (los valores por defecto son los correctos en local), una nota de que los tests usan `DATABASE\_URL` con `\_test` y el aviso de no poner `NODE\_ENV=production` en local (npm omite las devDependencies: nodemon, vitest, prisma). En el frontend: `.env` vale para dev y build, `.env.production` solo para el build y pisa a `.env`, y todas las `VITE\_\*` son públicas. En el servidor harán falta `NODE\_ENV=production` y `TRUST\_PROXY=1`: va con el despliegue. (hecho)
 
    \- Tests: `docker exec ecommerce\_bolsos\_api npm test`, contra la base `ecommerce\_bolsos\_test` (el setup aborta si el nombre no acaba en `\_test`).
 
