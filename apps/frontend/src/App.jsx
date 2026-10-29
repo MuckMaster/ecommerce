@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import { Routes, Route } from "react-router-dom";
 import Navbar from './components/Navbar/Navbar'
 import AuthModal from "./components/AuthModal/AuthModal";
@@ -12,13 +12,19 @@ import Cart from './pages/Cart/Cart'
 import Checkout from './pages/Checkout/Checkout'
 import OrderConfirmed from './pages/Checkout/OrderConfirmed'
 import RequireAdmin from './components/RequireAdmin/RequireAdmin'
-import AdminLayout from './layouts/AdminLayout/AdminLayout'
-import AdminDashboard from './pages/Admin/Dashboard/AdminDashboard'
-import AdminProducts from './pages/Admin/Products/AdminProducts'
-import AdminProductForm from './pages/Admin/Products/AdminProductForm'
-import AdminCategories from './pages/Admin/Categories/AdminCategories'
-import AdminOrders from './pages/Admin/Orders/AdminOrders'
-import AdminOrderDetail from './pages/Admin/Orders/AdminOrderDetail'
+
+// El panel de admin se carga bajo demanda: con import() dinámico Vite saca
+// cada página (y su CSS) a un chunk aparte, y React.lazy solo lo descarga
+// la primera vez que se pinta. Como RequireAdmin no pinta sus children si el
+// usuario no es ADMIN, un visitante de la tienda nunca descarga este código.
+// RequireAdmin se queda como import normal: es él quien decide si se pinta el admin.
+const AdminLayout = lazy(() => import('./layouts/AdminLayout/AdminLayout'))
+const AdminDashboard = lazy(() => import('./pages/Admin/Dashboard/AdminDashboard'))
+const AdminProducts = lazy(() => import('./pages/Admin/Products/AdminProducts'))
+const AdminProductForm = lazy(() => import('./pages/Admin/Products/AdminProductForm'))
+const AdminCategories = lazy(() => import('./pages/Admin/Categories/AdminCategories'))
+const AdminOrders = lazy(() => import('./pages/Admin/Orders/AdminOrders'))
+const AdminOrderDetail = lazy(() => import('./pages/Admin/Orders/AdminOrderDetail'))
 
 // Componente raíz: navbar y footer fijos en todas las páginas,
 // y en medio el enrutado. Las rutas /admin/* van envueltas en
@@ -38,6 +44,10 @@ function App() {
                 onClose={() => setAuthOpen(false)}
             />
 
+            {/* Sala de espera para la primera carga de AdminLayout. En la tienda
+                nada es lazy, así que este fallback nunca aparece allí. Navbar y
+                Footer quedan fuera para que no desaparezcan mientras carga. */}
+            <Suspense fallback={<p>Cargando...</p>}>
             <Routes>
                 <Route path="/" element={<Home />}/>
                 <Route path="/catalogo" element={<Catalogue />}/>
@@ -97,6 +107,7 @@ function App() {
                     </RequireAdmin>
                 } />
             </Routes>
+            </Suspense>
 
             <Footer />
         </>

@@ -1,5 +1,6 @@
 // AdminLayout.jsx — Layout compartido por todas las páginas del panel.
 // Incluye la barra lateral de navegación del admin.
+import { Suspense } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import './AdminLayout.css'
@@ -55,7 +56,14 @@ function AdminLayout({ children }) {
 
       {/* Contenido principal */}
       <main className="admin-main">
-        {children}
+        {/* Las páginas del admin son lazy: la primera vez que se entra en
+            cada una se descarga su chunk. Este Suspense solo envuelve el
+            contenido, así que mientras carga se ve el fallback aquí dentro
+            y la barra lateral se mantiene. Sin él, la espera subiría al
+            Suspense de App.jsx y se taparía el panel entero. */}
+        <Suspense fallback={<p>Cargando...</p>}>
+          {children}
+        </Suspense>
       </main>
 
     </div>
