@@ -124,7 +124,7 @@ En esta base solo entran mejoras que valgan para cualquier tienda. Lo propio de 
 
    \- B6. Refresh token en cookie httpOnly (cookie-parser), con rotación. `NODE\_ENV=production` activa `Secure`. Rotación con `updateMany` condicionado al hash viejo (count 0 → 401). El 401 del refresh no borra la cookie; el logout la borra siempre, también sin cookie o si falla el service. CORS con `credentials: true` y el frontend con `credentials: 'include'`. Frontend: borrar la clave vieja `refreshToken` de localStorage y arreglar el `headers` duplicado de `logout()` en `AuthContext.jsx`.
 
-   \- B7. Admin con React.lazy. Medir el build antes y después (hoy un único JS de 431 KB).
+   \- B7. Admin con React.lazy: `AdminLayout` y las 6 páginas del admin con `lazy()` en `App.jsx`, un chunk por página (sin `manualChunks`). `RequireAdmin` sigue con import normal: como no pinta sus children si no hay ADMIN, un visitante nunca descarga el admin. Dos Suspense: uno en `App.jsx` alrededor de `<Routes>` (primera carga de `AdminLayout`; Navbar y Footer fuera) y otro en `AdminLayout.jsx` solo alrededor de `{children}`, para que la barra lateral no desaparezca al entrar por primera vez en otra página del admin. Fallback `<p>Cargando...</p>` sin clase (`.admin-loading` vive en el CSS del admin). Build: JS principal de 431 KB a 382 KB + 11 KB de `AuthContext` (chunk compartido, se precarga), CSS principal de 37,6 KB a 26,6 KB. Es solo rendimiento: los chunks son públicos y la protección sigue en la API. (hecho)
 
    \- B8. `.env.example` con `CORS\_ORIGINS`, `TRUST\_PROXY`, `NODE\_ENV` y lo nuevo. El comentario de `TRUST\_PROXY` tiene que avisar de que, detrás de Nginx/Caddy sin `TRUST\_PROXY=1`, todos los clientes comparten la IP del proxy y el mismo contador, y un atacante bloquearía el login de todos. Marcar el paso 3 como hecho.
 
@@ -153,6 +153,10 @@ Pendiente para más adelante:
 \- Refresh token: tope absoluto de sesión. Cada refresh alarga la sesión 30 días, así que un usuario activo no caduca nunca. No renovar pasado un máximo desde el login (por ejemplo, 90 días). No necesita cambio de esquema: la rotación actualiza la misma fila, así que `created\_at` de `user\_sessions` ya es la fecha del login.
 
 \- Quitar el `console.log("WEBHOOK HIT…")` de depuración de `app.js`.
+
+\- Chunks que ya no existen tras un despliegue: los nombres llevan hash, así que si un admin tiene la pestaña abierta durante un despliegue, al entrar en una página nueva del admin pedirá un chunk viejo que ya no está y el `import()` fallará. Escuchar `vite:preloadError` en `main.jsx` y recargar la página (con alguna protección para no entrar en bucle). Va con el despliegue.
+
+\- Limpiar el lint del frontend (`npm run lint` desde `apps/frontend/`): 13 errores y 14 avisos que ya estaban antes de B7. Hay variables e imports sin usar (Carousel, CartContext, Catalogue, Account), `setState` dentro de un efecto en `Navbar.jsx`, `react-refresh/only-export-components` en AuthContext y CartContext, y dependencias que faltan en los `useEffect`. El aviso de `motion` en `ProductDetail.jsx` es falso: se usa como `<motion.img>`.
 
 \- Aviso de seguridad en `body-parser` (va con Express): revisar npm audit y actualizar dependencias (Express incluido) antes del tag base-node-v2 del paso 4.
 
